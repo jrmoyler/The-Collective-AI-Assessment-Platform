@@ -3,6 +3,122 @@
 @tailwind utilities;
 
 :root {
+  --midnight-navy: #0B0F1C;
+  --deep-navy: #1A2040;
+  --matte-gold: #D4A843;
+  --signal-white: #F5F5F5;
+  --muted-silver: #8B9BAE;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #0B0F1C;
+  color: #F5F5F5;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0B0F1C;
+}
+::-webkit-scrollbar-thumb {
+  background: #1A2040;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #D4A843;
+}
+
+.gold-text {
+  background: linear-gradient(135deg, #D4A843 0%, #f0c866 50%, #D4A843 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glass-card {
+  background: rgba(26, 32, 64, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 168, 67, 0.15);
+  border-radius: 12px;
+}
+
+.progress-bar {
+  background: linear-gradient(90deg, #D4A843, #f0c866);
+  transition: width 0.5s ease;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  height: 4px;
+  background: rgba(139, 155, 174, 0.2);
+  border-radius: 2px;
+  outline: none;
+  width: 100%;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #D4A843;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 0 3px rgba(212, 168, 67, 0.2);
+  transition: box-shadow 0.2s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 6px rgba(212, 168, 67, 0.2);
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #1A2040 25%, #2a3060 50%, #1A2040 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212, 168, 67, 0.4); }
+  50% { box-shadow: 0 0 0 12px rgba(212, 168, 67, 0); }
+}
+
+.pulse-gold {
+  animation: pulse-gold 2s ease-in-out infinite;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.recharts-polar-grid-concentric-polygon {
+  stroke: rgba(139, 155, 174, 0.15) !important;
+}
+.recharts-polar-angle-axis-tick-value {
+  fill: #8B9BAE !important;
+  font-size: 11px !important;
+}
+
+:root {
   --background: #ffffff;
   --foreground: #171717;
 }

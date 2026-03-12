@@ -1,0 +1,351 @@
+export const sections = [
+  {
+    id: 1,
+    title: 'Business Impact & Commercial Metrics',
+    description: 'Help us understand your current operational baseline and ROI expectations.',
+    icon: '📊',
+  },
+  {
+    id: 2,
+    title: 'Problem Definition & Use-Case Clarity',
+    description: 'Clarity on the problem is the first predictor of AI success.',
+    icon: '🎯',
+  },
+  {
+    id: 3,
+    title: 'Data Readiness',
+    description: 'AI is only as good as the data feeding it. Let\'s assess yours.',
+    icon: '🗄️',
+  },
+  {
+    id: 4,
+    title: 'Organizational & Cultural Readiness',
+    description: 'The human side of AI adoption is where most initiatives succeed or fail.',
+    icon: '🏢',
+  },
+  {
+    id: 5,
+    title: 'Technology & Infrastructure Fit',
+    description: 'Your existing stack determines implementation speed and complexity.',
+    icon: '⚙️',
+  },
+  {
+    id: 6,
+    title: 'Ethics, Compliance & Contact Info',
+    description: 'Responsible AI is our foundation. Tell us about your governance posture.',
+    icon: '🔒',
+  },
+];
+
+export type QuestionType = 'scale' | 'text' | 'textarea' | 'select' | 'radio';
+
+export interface Question {
+  id: string;
+  section: number;
+  label: string;
+  type: QuestionType;
+  required: boolean;
+  options?: string[];
+  min?: number;
+  max?: number;
+  placeholder?: string;
+  helperText?: string;
+}
+
+export const questions: Question[] = [
+  // Section 1
+  {
+    id: 'q1_marketing_hours',
+    section: 1,
+    label: 'How many hours per week does your team spend on repetitive marketing tasks (content creation, social posting, email campaigns)?',
+    type: 'scale',
+    min: 0,
+    max: 40,
+    required: true,
+    helperText: 'Drag to select approximate hours',
+  },
+  {
+    id: 'q2_lead_hours',
+    section: 1,
+    label: 'How many hours per week on lead qualification and follow-up?',
+    type: 'scale',
+    min: 0,
+    max: 40,
+    required: true,
+    helperText: 'Drag to select approximate hours',
+  },
+  {
+    id: 'q3_sales_admin_hours',
+    section: 1,
+    label: 'How many hours per week on sales admin (notes, CRM updates, proposal generation)?',
+    type: 'scale',
+    min: 0,
+    max: 40,
+    required: true,
+    helperText: 'Drag to select approximate hours',
+  },
+  {
+    id: 'q4_lead_volume',
+    section: 1,
+    label: 'What is your current monthly lead volume and approximate conversion rate?',
+    type: 'select',
+    required: true,
+    options: [
+      'Under 50 leads / <5% conversion',
+      '50-200 leads / 5-10% conversion',
+      '200-500 leads / 10-20% conversion',
+      '500-1000 leads / 20-30% conversion',
+      '1000+ leads / 30%+ conversion',
+    ],
+  },
+  {
+    id: 'q5_roi_target',
+    section: 1,
+    label: 'What ROI % are you targeting from any new AI initiative in the next 12 months?',
+    type: 'select',
+    required: true,
+    options: [
+      'Not sure yet',
+      '10-25% efficiency gain',
+      '25-50% efficiency gain',
+      '50-100% efficiency gain',
+      '100%+ / transformative ROI',
+    ],
+  },
+  {
+    id: 'q6_process_efficiency',
+    section: 1,
+    label: 'Rate your current marketing/sales process efficiency overall.',
+    type: 'scale',
+    min: 1,
+    max: 5,
+    required: true,
+    helperText: '1 = Very inefficient, 5 = Highly optimized',
+  },
+
+  // Section 2
+  {
+    id: 'q7_problems_identified',
+    section: 2,
+    label: 'Have you identified 1-3 specific high-stakes business problems AI could solve? Describe them briefly.',
+    type: 'textarea',
+    required: true,
+    placeholder: 'e.g., "We spend 15 hours/week manually qualifying inbound leads. AI could automate initial scoring and routing..."',
+  },
+  {
+    id: 'q8_outcome_clarity',
+    section: 2,
+    label: 'How clearly defined is the expected outcome and success timeline for those problems?',
+    type: 'scale',
+    min: 1,
+    max: 5,
+    required: true,
+    helperText: '1 = Very vague, 5 = Precise metrics and timeline defined',
+  },
+  {
+    id: 'q9_executive_sponsor',
+    section: 2,
+    label: 'Do you have executive sponsorship for AI projects? If yes, which role?',
+    type: 'select',
+    required: true,
+    options: [
+      'No executive sponsor yet',
+      'CEO / Founder',
+      'COO',
+      'CTO / CIO',
+      'CMO / VP Marketing',
+      'VP Sales',
+      'Other C-Suite',
+    ],
+  },
+
+  // Section 3
+  {
+    id: 'q10_data_centralized',
+    section: 3,
+    label: 'Is your core business data centralized and accessible in one or few systems?',
+    type: 'scale',
+    min: 1,
+    max: 5,
+    required: true,
+    helperText: '1 = Highly fragmented across tools, 5 = Centralized and well-connected',
+  },
+  {
+    id: 'q11_data_quality',
+    section: 3,
+    label: 'How would you rate your data quality — cleanliness, labeling, and completeness?',
+    type: 'scale',
+    min: 1,
+    max: 5,
+    required: true,
+    helperText: '1 = Poor quality / lots of gaps, 5 = Clean, labeled, and complete',
+  },
+  {
+    id: 'q12_data_governance',
+    section: 3,
+    label: 'Do you have data governance policies in place (ownership, access controls, retention)?',
+    type: 'radio',
+    required: true,
+    options: ['Yes, documented and enforced', 'Partially — informal processes', 'No, not yet'],
+  },
+
+  // Section 4
+  {
+    id: 'q13_team_openness',
+    section: 4,
+    label: 'How open is your team to learning new AI tools and changing their workflows?',
+    type: 'scale',
+    min: 1,
+    max: 5,
+    required: true,
+    helperText: '1 = High resistance expected, 5 = Eager to adopt',
+  },
+  {
+    id: 'q14_internal_resources',
+    section: 4,
+    label: 'Do you have internal resources for ongoing AI ownership, training, and maintenance?',
+    type: 'scale',
+    min: 1,
+    max: 5,
+    required: true,
+    helperText: '1 = No internal capacity, 5 = Dedicated AI team in place',
+  },
+  {
+    id: 'q15_leadership_alignment',
+    section: 4,
+    label: 'Rate leadership alignment and change-management willingness for AI initiatives.',
+    type: 'scale',
+    min: 1,
+    max: 5,
+    required: true,
+    helperText: '1 = Skeptical leadership, 5 = Fully aligned and championing change',
+  },
+
+  // Section 5
+  {
+    id: 'q16_tech_compatibility',
+    section: 5,
+    label: 'How compatible is your current tech stack with AI integrations (CRM, ERP, cloud platforms)?',
+    type: 'scale',
+    min: 1,
+    max: 5,
+    required: true,
+    helperText: '1 = Legacy systems, difficult to integrate, 5 = Modern stack with open APIs',
+  },
+  {
+    id: 'q17_mlops_readiness',
+    section: 5,
+    label: 'Do you have MLOps or AI monitoring processes in place — or willingness to add them?',
+    type: 'scale',
+    min: 1,
+    max: 5,
+    required: true,
+    helperText: '1 = No awareness, 5 = Established practices or clear roadmap',
+  },
+  {
+    id: 'q18_scalability',
+    section: 5,
+    label: 'Rate your current infrastructure scalability for running production AI agents.',
+    type: 'scale',
+    min: 1,
+    max: 5,
+    required: true,
+    helperText: '1 = Not ready, 5 = Cloud-native and ready to scale',
+  },
+
+  // Section 6
+  {
+    id: 'q19_ethics_policies',
+    section: 6,
+    label: 'Do you have documented policies for data privacy, bias mitigation, and responsible AI?',
+    type: 'scale',
+    min: 1,
+    max: 5,
+    required: true,
+    helperText: '1 = No policies, 5 = Comprehensive governance framework in place',
+  },
+  {
+    id: 'q20_regulated_industry',
+    section: 6,
+    label: 'Are you in a regulated industry? If so, which regulations apply?',
+    type: 'select',
+    required: true,
+    options: [
+      'No, not regulated',
+      'Healthcare (HIPAA)',
+      'Finance (SOC2, PCI-DSS)',
+      'Legal',
+      'Education (FERPA)',
+      'Government',
+      'Multiple regulations apply',
+    ],
+  },
+  {
+    id: 'q21_concerns',
+    section: 6,
+    label: 'What concerns you most about AI implementation in your business?',
+    type: 'textarea',
+    required: false,
+    placeholder: 'e.g., "Data security, employee adoption, cost of implementation, accuracy of outputs..."',
+  },
+  {
+    id: 'q22_company_size',
+    section: 6,
+    label: 'Company size',
+    type: 'select',
+    required: true,
+    options: ['Solo / Freelancer', '2-10 employees', '11-50 employees', '51-200 employees', '201-500 employees', '500+ employees'],
+  },
+  {
+    id: 'q23_industry',
+    section: 6,
+    label: 'Industry',
+    type: 'select',
+    required: true,
+    options: [
+      'B2B SaaS / Technology',
+      'Marketing / Advertising',
+      'Healthcare',
+      'Financial Services',
+      'Manufacturing',
+      'Real Estate',
+      'Professional Services / Consulting',
+      'E-commerce / Retail',
+      'Education',
+      'Non-profit',
+      'Other',
+    ],
+  },
+  {
+    id: 'q24_website',
+    section: 6,
+    label: 'Company website',
+    type: 'text',
+    required: false,
+    placeholder: 'https://yourcompany.com',
+  },
+  {
+    id: 'q25_contact_name',
+    section: 6,
+    label: 'Your full name',
+    type: 'text',
+    required: true,
+    placeholder: 'Jane Smith',
+  },
+  {
+    id: 'q25_contact_email',
+    section: 6,
+    label: 'Work email address',
+    type: 'text',
+    required: true,
+    placeholder: 'jane@company.com',
+  },
+  {
+    id: 'q25_company_name',
+    section: 6,
+    label: 'Company name',
+    type: 'text',
+    required: true,
+    placeholder: 'Acme Corp',
+  },
+];
