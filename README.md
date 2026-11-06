@@ -28,7 +28,7 @@ Next.js 14, Tailwind CSS, Recharts, Anthropic SDK, Supabase, Vercel
 Import repo to Vercel, add all environment variables, deploy.
 
 Required env vars:
-- ANTHROPIC_API_KEY
+- ANTHROPIC_API_KEY (optional: without it, or if the call fails, results come from the built-in rubric in lib/score.ts; with it, Claude writes the summary and agent picks)
 - NEXT_PUBLIC_SUPABASE_URL
 - NEXT_PUBLIC_SUPABASE_ANON_KEY
 - SUPABASE_SERVICE_ROLE_KEY

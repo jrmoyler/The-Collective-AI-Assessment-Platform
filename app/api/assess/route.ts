@@ -4,6 +4,9 @@ import { getServiceClient } from '@/lib/supabase';
 import { AuditAnswers, AssessmentResult } from '@/types';
 
 import { forwardLead } from '@/lib/leadWebhook';
+import { scoreAnswers, mergeAssessment } from '@/lib/score';
+
+export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,11 +19,8 @@ export async function POST(req: NextRequest) {
     if (!/^\S+@\S+\.\S+$/.test(String(answers.q25_contact_email || ''))) {
       return NextResponse.json({ error: 'A valid email is required' }, { status: 400 });
     }
-    if (!process.env.ANTHROPIC_API_KEY) {
-      console.error('ANTHROPIC_API_KEY is not set');
-      return NextResponse.json({ error: 'Assessment is not configured' }, { status: 503 });
-    }
-    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    // The rubric score always exists; the AI analysis refines it when available.
+    const base = scoreAnswers(answers);
 
     const systemPrompt = `You are The Collective's senior AI consultant at Collective AI, a premier AI strategy practice based in Columbus, Ohio. 
 
@@ -123,22 +123,25 @@ ETHICS & CONTEXT:
 
 Return ONLY the JSON assessment object.`;
 
-    const message = await anthropic.messages.create({
-      model: process.env.ANTHROPIC_MODEL || 'claude-opus-4-5',
-      max_tokens: 1500,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: userMessage }],
-    });
-
-    const responseText = message.content[0].type === 'text' ? message.content[0].text : '';
-    
-    let assessment: AssessmentResult;
-    try {
-      const cleaned = responseText.replace(/```json\n?|\n?```/g, '').trim();
-      assessment = JSON.parse(cleaned);
-    } catch {
-      console.error('Failed to parse Claude response:', responseText);
-      return NextResponse.json({ error: 'The analysis came back malformed. Please submit again.' }, { status: 502 });
+    let assessment: AssessmentResult = base;
+    if (process.env.ANTHROPIC_API_KEY) {
+      try {
+        const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 40000, maxRetries: 1 });
+        const message = await anthropic.messages.create({
+          model: process.env.ANTHROPIC_MODEL || 'claude-sonnet-5-5',
+          max_tokens: 1500,
+          system: systemPrompt,
+          messages: [{ role: 'user', content: userMessage }],
+        });
+        const responseText = message.content[0]?.type === 'text' ? message.content[0].text : '';
+        const cleaned = responseText.replace(/```json\n?|\n?```/g, '').trim();
+        assessment = mergeAssessment(JSON.parse(cleaned.slice(cleaned.indexOf('{'), cleaned.lastIndexOf('}') + 1)), base);
+      } catch (aiError) {
+        // Keep the rubric result; the visitor still gets a complete report.
+        console.error('AI analysis unavailable, using rubric score:', aiError instanceof Error ? aiError.message : aiError);
+      }
+    } else {
+      console.error('ANTHROPIC_API_KEY is not set; using rubric score');
     }
 
     // Store in Supabase

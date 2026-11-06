@@ -1,212 +1,162 @@
 'use client';
-import { Tile } from '@/components/Marks';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { sections, questions } from '@/lib/questions';
 import { AuditAnswers } from '@/types';
 import QuestionRenderer from './QuestionRenderer';
 import LoadingAssessment from './LoadingAssessment';
+import SilkField from '@/components/SilkField';
 
 const STORAGE_KEY = 'collective_audit_answers';
+const SECTION_KEY = 'collective_audit_section';
+type Answers = Partial<AuditAnswers>;
+
+const isHours = (id: string) => questions.find((q) => q.id === id)?.min === 0;
 
 export default function AuditForm() {
   const router = useRouter();
-  const [currentSection, setCurrentSection] = useState(1);
-  const [answers, setAnswers] = useState<Partial<AuditAnswers>>({});
-  const [isLoading, setIsLoading] = useState(false);
+  const [current, setCurrent] = useState(1);
+  const [reached, setReached] = useState(1);
+  const [answers, setAnswers] = useState<Answers>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+  const headRef = useRef<HTMLHeadingElement>(null);
+  const restored = useRef(false);
 
-  // Load saved answers from localStorage
+  // Resume where the visitor left off.
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        setAnswers(JSON.parse(saved));
-      } catch {}
-    }
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) setAnswers(JSON.parse(saved));
+      const sec = Number(localStorage.getItem(SECTION_KEY));
+      if (sec >= 1 && sec <= sections.length) { setCurrent(sec); setReached(sec); }
+    } catch {}
+    restored.current = true;
   }, []);
 
-  // Save to localStorage on change
   useEffect(() => {
-    if (Object.keys(answers).length > 0) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(answers));
-    }
-  }, [answers]);
+    if (!restored.current) return;
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(answers)); localStorage.setItem(SECTION_KEY, String(current)); } catch {}
+  }, [answers, current]);
 
-  const sectionQuestions = questions.filter((q) => q.section === currentSection);
-  const totalSections = sections.length;
-  const progress = ((currentSection - 1) / totalSections) * 100;
+  const total = sections.length;
+  const sectionQs = questions.filter((q) => q.section === current);
+  const valueOf = (id: string) => {
+    const v = answers[id as keyof AuditAnswers];
+    // Hour sliders show 0 by default, so 0 counts as an answer.
+    return v === undefined && isHours(id) ? 0 : v;
+  };
+  const answered = questions.filter((q) => { const v = valueOf(q.id); return v !== undefined && v !== ''; }).length;
+  const progress = Math.round((answered / questions.length) * 100);
 
-  const validateSection = () => {
-    const newErrors: Record<string, string> = {};
-    sectionQuestions.forEach((q) => {
-      if (q.required) {
-        const val = answers[q.id as keyof AuditAnswers];
-        if (val === undefined || val === null || val === '') {
-          newErrors[q.id] = 'This field is required';
-        }
-      }
+  const validate = () => {
+    const errs: Record<string, string> = {};
+    sectionQs.forEach((q) => {
+      const v = valueOf(q.id);
+      if (q.required && (v === undefined || v === null || String(v).trim() === '')) errs[q.id] = 'Answer this one to continue.';
+      if (q.id === 'q25_contact_email' && v && !/^\S+@\S+\.\S+$/.test(String(v))) errs[q.id] = 'That email does not look right.';
+      if (q.id === 'q24_website' && v && !/^(https?:\/\/)?[\w-]+(\.[\w-]+)+/.test(String(v))) errs[q.id] = 'Use a full web address, like yourcompany.com.';
     });
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setErrors(errs);
+    const first = Object.keys(errs)[0];
+    if (first) document.getElementById(`q-${first}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return !first;
   };
 
-  const handleNext = () => {
-    if (!validateSection()) return;
-    if (currentSection < totalSections) {
-      setCurrentSection((s) => s + 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      handleSubmit();
-    }
+  const goTo = (n: number) => {
+    setCurrent(n); setReached((r) => Math.max(r, n)); setErrors({});
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => headRef.current?.focus({ preventScroll: true }), 350);
   };
 
-  const handleBack = () => {
-    if (currentSection > 1) {
-      setCurrentSection((s) => s - 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
-  const handleAnswer = (id: string, value: string | number) => {
-    setAnswers((prev) => ({ ...prev, [id]: value }));
-    if (errors[id]) {
-      setErrors((prev) => {
-        const n = { ...prev };
-        delete n[id];
-        return n;
-      });
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (!validateSection()) return;
-    setIsLoading(true);
-
+  const submit = async () => {
+    setLoading(true); setSubmitError('');
+    // Hour sliders left at 0 are sent as 0, not missing.
+    const full: Answers = { ...answers };
+    questions.forEach((q) => { if (isHours(q.id) && full[q.id as keyof AuditAnswers] === undefined) (full as Record<string, unknown>)[q.id] = 0; });
     try {
-      const res = await fetch('/api/assess', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answers }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok || !data.assessment) {
-        throw new Error(data.error || 'Assessment failed');
-      }
-
-      // Store results in sessionStorage
+      const res = await fetch('/api/assess', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ answers: full }) });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.assessment) throw new Error(data.error || 'The analysis did not come back.');
       sessionStorage.setItem('audit_result', JSON.stringify(data.assessment));
-      sessionStorage.setItem('audit_answers', JSON.stringify(answers));
-      localStorage.removeItem(STORAGE_KEY);
-
+      sessionStorage.setItem('audit_answers', JSON.stringify(full));
+      try { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(SECTION_KEY); } catch {}
       router.push('/results');
     } catch (err) {
-      console.error(err);
-      setIsLoading(false);
-      alert('Something went wrong. Please try again.');
+      setLoading(false);
+      setSubmitError(`${err instanceof Error ? err.message : 'Something went wrong.'} Your answers are saved on this device. Try again in a moment.`);
     }
   };
 
-  if (isLoading) return <LoadingAssessment />;
+  const next = () => {
+    if (!validate()) return;
+    if (current < total) goTo(current + 1); else submit();
+  };
 
-  const section = sections[currentSection - 1];
+  const set = (id: string, v: string | number) => {
+    setAnswers((a) => ({ ...a, [id]: v }));
+    if (errors[id]) setErrors((e) => { const n = { ...e }; delete n[id]; return n; });
+  };
+
+  if (loading) return <LoadingAssessment />;
+
+  const section = sections[current - 1];
+  const sectionDone = sectionQs.filter((q) => { const v = valueOf(q.id); return v !== undefined && v !== ''; }).length;
 
   return (
-    <div style={{ backgroundColor: '#0B0F1C', minHeight: '100vh', color: '#F5F5F5' }}>
-      {/* Top bar */}
-      <div style={{ borderBottom: '1px solid rgba(212,168,67,0.15)', padding: '20px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <Tile mark="the-collective" size={32} />
-          <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.1em' }}>THE COLLECTIVE</span>
-        </div>
-        <div style={{ fontSize: 13, color: '#8B9BAE' }}>
-          Section {currentSection} of {totalSections}
-        </div>
-      </div>
-
-      {/* Progress bar */}
-      <div style={{ height: 3, backgroundColor: 'rgba(139,155,174,0.15)' }}>
-        <div
-          style={{
-            height: '100%',
-            width: `${progress + (100 / totalSections)}%`,
-            background: 'linear-gradient(90deg, #D4A843, #f0c866)',
-            transition: 'width 0.5s ease',
-          }}
-        />
-      </div>
-
-      {/* Section header */}
-      <div style={{ maxWidth: 760, margin: '0 auto', padding: '60px 40px 0' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 8 }}>
-          <div style={{ display: 'flex', gap: 4 }}>
+    <div className="flow">
+      <SilkField intensity={0.55} />
+      <div className="veilgrad" />
+      <div className="flow-bar" role="progressbar" aria-label="Questions answered" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}><i style={{ width: `${progress}%` }} /></div>
+      <div className="flow-grid" style={{ position: 'relative', zIndex: 1 }}>
+        <aside className="rail" aria-label="Sections">
+          <ol>
             {sections.map((s) => (
-              <div
-                key={s.id}
-                style={{
-                  width: 28,
-                  height: 4,
-                  borderRadius: 2,
-                  backgroundColor: s.id <= currentSection ? '#D4A843' : 'rgba(139,155,174,0.2)',
-                  transition: 'background-color 0.3s',
-                }}
-              />
+              <li key={s.id} className={s.id === current ? 'on' : s.id < reached || s.id < current ? 'done' : ''}>
+                <button type="button" disabled={s.id > reached} onClick={() => goTo(s.id)} aria-current={s.id === current ? 'step' : undefined}>
+                  <span className="dot">{s.id < current || (s.id < reached && s.id !== current) ? '✓' : s.id}</span>
+                  <span>{s.title.replace(' & ', ' and ')}</span>
+                </button>
+              </li>
             ))}
-          </div>
-        </div>
-        <div style={{ fontSize: 13, color: '#D4A843', fontWeight: 600, letterSpacing: '0.08em', marginBottom: 12 }}>
-          SECTION {currentSection}
-        </div>
-        <h1 style={{ fontSize: 32, fontWeight: 800, marginBottom: 12 }}>{section.title}</h1>
-        <p style={{ color: '#8B9BAE', fontSize: 16, lineHeight: 1.6, marginBottom: 48 }}>{section.description}</p>
+          </ol>
+          <div className="note"><b>{answered} / {questions.length}</b>answered · saved on this device</div>
+        </aside>
+
+        <main>
+          <div className="mrail" aria-hidden="true">{sections.map((s) => <i key={s.id} className={s.id === current ? 'on' : s.id < current ? 'done' : ''} />)}</div>
+          <header className="qhead">
+            <div className="kicker">Section {current} of {total}</div>
+            <h1 ref={headRef} tabIndex={-1} style={{ outline: 'none' }}>{section.title.replace(' & ', ' and ')}</h1>
+            <p>{section.description}</p>
+          </header>
+
+          <ol className="qlist">
+            {sectionQs.map((q) => {
+              const n = questions.findIndex((x) => x.id === q.id) + 1;
+              return (
+                <li key={q.id} id={`q-${q.id}`} className={`q${errors[q.id] ? ' err' : ''}`}>
+                  <span className="qn">{String(n).padStart(2, '0')}</span>
+                  <div className="qlabel" id={`${q.id}-label`}>{q.label}{!q.required && <span className="opt">Optional</span>}</div>
+                  <div className="ctl"><QuestionRenderer question={q} value={valueOf(q.id) as string | number | undefined} onChange={(v) => set(q.id, v)} invalid={!!errors[q.id]} /></div>
+                  {errors[q.id] && <div className="qerr" id={`${q.id}-err`} role="alert">{errors[q.id]}</div>}
+                </li>
+              );
+            })}
+          </ol>
+
+          {submitError && <div className="banner" role="alert">{submitError}</div>}
+
+          <nav className="flow-nav" aria-label="Audit navigation">
+            {current > 1 ? <button type="button" className="btn" onClick={() => goTo(current - 1)}>← Back</button> : <span />}
+            <span className="count">{sectionDone} of {sectionQs.length} in this section</span>
+            <button type="button" className="btn btn-gold" onClick={next}>{current === total ? 'Get my readiness report →' : 'Continue →'}</button>
+          </nav>
+          <div style={{ height: 40 }} />
+        </main>
       </div>
-
-      {/* Questions */}
-      <div style={{ maxWidth: 760, margin: '0 auto', padding: '0 40px' }}>
-        {sectionQuestions.map((q, idx) => (
-          <div key={q.id} style={{ marginBottom: 48 }}>
-            <div style={{ fontSize: 13, color: '#D4A843', fontWeight: 600, marginBottom: 8, letterSpacing: '0.05em' }}>
-              Q{idx + 1}
-            </div>
-            <label style={{ display: 'block', fontWeight: 600, fontSize: 17, marginBottom: 12, lineHeight: 1.5 }}>
-              {q.label}
-              {q.required && <span style={{ color: '#D4A843', marginLeft: 4 }}>*</span>}
-            </label>
-            <QuestionRenderer
-              question={q}
-              value={answers[q.id as keyof AuditAnswers]}
-              onChange={(val) => handleAnswer(q.id, val)}
-            />
-            {errors[q.id] && (
-              <div style={{ color: '#ef4444', fontSize: 13, marginTop: 8 }}>{errors[q.id]}</div>
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* Navigation */}
-      <div style={{ maxWidth: 760, margin: '0 auto', padding: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        {currentSection > 1 ? (
-          <button
-            onClick={handleBack}
-            style={{ background: 'rgba(139,155,174,0.1)', border: '1px solid rgba(139,155,174,0.2)', color: '#8B9BAE', padding: '14px 28px', borderRadius: 8, fontWeight: 600, cursor: 'pointer', fontSize: 15 }}
-          >
-            ← Back
-          </button>
-        ) : <div />}
-
-        <button
-          onClick={handleNext}
-          style={{ background: '#D4A843', color: '#0B0F1C', padding: '14px 40px', borderRadius: 8, fontWeight: 800, cursor: 'pointer', fontSize: 16, border: 'none' }}
-        >
-          {currentSection === totalSections ? 'Get My AI Readiness Score →' : 'Continue →'}
-        </button>
-      </div>
-
-      <div style={{ height: 60 }} />
     </div>
   );
 }

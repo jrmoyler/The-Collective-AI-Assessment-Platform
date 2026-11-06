@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { SITE, divisionUrl } from '@/lib/links';
 import { Tile } from '@/components/Marks';
+import SilkField from '@/components/SilkField';
 
 // Five readiness dimensions, as drawn on the results page. Illustrative shape only: no numbers claimed.
 const DIMS = ['Strategy', 'Data', 'Culture', 'Technology', 'Governance'];
@@ -49,25 +50,28 @@ const ROUTES: [string, string, string][] = [
 
 export default function Home() {
   return (
-    <main className="sheet">
+    <>
+    <SilkField />
+    <div className="veilgrad" />
+    <main className="sheet" style={{ position: 'relative', zIndex: 1 }}>
       <div className="sheet-head"><span className="mono"><b>T-01</b> · AI Readiness Audit</span><span className="mono">Run by The Collective · Collective AI Inc</span></div>
 
       <div className="block">
         <div className="margin"><b>§ 01</b>The audit<small>Twenty-five questions. About six minutes. Five scores.</small></div>
         <div className="body">
-          <div className="scoreplan">
+          <div className="hero-tc">
             <div>
               <h1>Where does your business <span className="accent">actually</span> stand with AI?</h1>
               <p className="lede" style={{ marginTop: 24 }}>Twenty-five questions about how your business runs today. You get five readiness scores, an estimate of the hours AI could give back each week, and the Collective AI division to call first.</p>
-              <div className="actions" style={{ marginTop: 28 }}>
+              <div className="actions" style={{ marginTop: 30 }}>
                 <Link className="btn btn-gold btn-lg" href="/audit">Take the free audit →</Link>
                 <span className="mono">No card · no commitment</span>
               </div>
-              <div className="facts" style={{ marginTop: 36 }}>
-                <div><b>25</b><span>Questions</span></div>
-                <div><b>~6</b><span>Minutes</span></div>
-                <div><b>5</b><span>Scores</span></div>
-                <div><b>Free</b><span>Report on finish</span></div>
+              <div className="memo" style={{ marginTop: 36 }}>
+                <span>The AI Readiness Audit</span>
+                <em>Free</em>
+                <b>25 questions · about 6 minutes · 5 scores</b>
+                <span>Your report appears the moment you finish.</span>
               </div>
             </div>
             <Pentagon />
@@ -126,5 +130,6 @@ export default function Home() {
         </div>
       </div>
     </main>
+    </>
   );
 }
