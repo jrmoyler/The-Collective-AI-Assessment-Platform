@@ -1,4 +1,5 @@
 'use client';
+import { Tile } from '@/components/Marks';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -118,7 +119,7 @@ export default function AuditForm() {
       {/* Top bar */}
       <div style={{ borderBottom: '1px solid rgba(212,168,67,0.15)', padding: '20px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ width: 32, height: 32, borderRadius: '50%', border: '2px solid #D4A843', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 800, color: '#D4A843' }}>C</div>
+          <Tile mark="the-collective" size={32} />
           <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.1em' }}>THE COLLECTIVE</span>
         </div>
         <div style={{ fontSize: 13, color: '#8B9BAE' }}>
@@ -157,7 +158,7 @@ export default function AuditForm() {
           </div>
         </div>
         <div style={{ fontSize: 13, color: '#D4A843', fontWeight: 600, letterSpacing: '0.08em', marginBottom: 12 }}>
-          {section.icon} SECTION {currentSection}
+          SECTION {currentSection}
         </div>
         <h1 style={{ fontSize: 32, fontWeight: 800, marginBottom: 12 }}>{section.title}</h1>
         <p style={{ color: '#8B9BAE', fontSize: 16, lineHeight: 1.6, marginBottom: 48 }}>{section.description}</p>

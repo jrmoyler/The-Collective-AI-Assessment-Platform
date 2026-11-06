@@ -1,4 +1,5 @@
 'use client';
+import { Tile } from '@/components/Marks';
 
 import { useState, useCallback } from 'react';
 import { Submission } from '@/types';
@@ -17,7 +18,7 @@ function LoginForm({ onLogin }: { onLogin: (u: string, p: string) => void }) {
     <div style={{ backgroundColor: '#0B0F1C', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#F5F5F5' }}>
       <div style={{ background: 'rgba(26,32,64,0.6)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: 16, padding: 48, width: 400 }}>
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <div style={{ width: 48, height: 48, borderRadius: '50%', border: '2px solid #D4A843', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontWeight: 900, color: '#D4A843', margin: '0 auto 16px' }}>C</div>
+          <Tile mark="the-collective" size={48} />
           <h1 style={{ fontSize: 24, fontWeight: 800 }}>Admin Dashboard</h1>
           <p style={{ color: '#8B9BAE', fontSize: 14 }}>The Collective — Collective AI</p>
         </div>
@@ -148,7 +149,7 @@ Collective AI | Columbus, Ohio`;
       {/* Header */}
       <div style={{ borderBottom: '1px solid rgba(212,168,67,0.15)', padding: '20px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ width: 36, height: 36, borderRadius: '50%', border: '2px solid #D4A843', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 800, color: '#D4A843' }}>C</div>
+          <Tile mark="the-collective" size={36} />
           <div>
             <div style={{ fontWeight: 800, fontSize: 16 }}>THE COLLECTIVE</div>
             <div style={{ fontSize: 11, color: '#8B9BAE', letterSpacing: '0.1em' }}>ADMIN DASHBOARD</div>

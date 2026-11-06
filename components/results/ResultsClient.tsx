@@ -1,4 +1,5 @@
 'use client';
+import { Tile } from '@/components/Marks';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -125,7 +126,7 @@ export default function ResultsClient() {
       {/* Nav */}
       <div style={{ borderBottom: '1px solid rgba(212,168,67,0.15)', padding: '20px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ width: 32, height: 32, borderRadius: '50%', border: '2px solid #D4A843', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 800, color: '#D4A843' }}>C</div>
+          <Tile mark="the-collective" size={32} />
           <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.1em' }}>THE COLLECTIVE</span>
         </div>
         <div style={{ fontSize: 13, color: '#8B9BAE' }}>Your AI Readiness Report</div>
@@ -241,11 +242,11 @@ export default function ResultsClient() {
           <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 24 }}>Dimension Breakdown</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
             {[
-              { key: 'strategy', label: 'Strategy', score: result.readiness_scores.strategy, icon: '🎯', desc: 'Problem clarity & use case definition' },
-              { key: 'data', label: 'Data', score: result.readiness_scores.data, icon: '🗄️', desc: 'Quality, access & governance' },
-              { key: 'culture', label: 'Culture', score: result.readiness_scores.culture, icon: '🏢', desc: 'Team openness & leadership alignment' },
-              { key: 'tech', label: 'Technology', score: result.readiness_scores.tech, icon: '⚙️', desc: 'Stack compatibility & scalability' },
-              { key: 'governance', label: 'Governance', score: result.readiness_scores.governance, icon: '🔒', desc: 'Ethics, compliance & policies' },
+              { key: 'strategy', label: 'Strategy', score: result.readiness_scores.strategy, icon: '', desc: 'Problem clarity & use case definition' },
+              { key: 'data', label: 'Data', score: result.readiness_scores.data, icon: '', desc: 'Quality, access & governance' },
+              { key: 'culture', label: 'Culture', score: result.readiness_scores.culture, icon: '', desc: 'Team openness & leadership alignment' },
+              { key: 'tech', label: 'Technology', score: result.readiness_scores.tech, icon: '', desc: 'Stack compatibility & scalability' },
+              { key: 'governance', label: 'Governance', score: result.readiness_scores.governance, icon: '', desc: 'Ethics, compliance & policies' },
             ].map(({ key, label, score, icon, desc }) => {
               const color = score >= 75 ? '#10b981' : score >= 50 ? '#D4A843' : '#6b7280';
               return (

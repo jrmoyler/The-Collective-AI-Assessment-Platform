@@ -1,52 +1,57 @@
-import { SITE } from '@/lib/links';
+import Link from 'next/link';
+import { SITE, divisionUrl } from '@/lib/links';
+import { Tile } from '@/components/Marks';
 
-const strip: React.CSSProperties = {
-  background: '#050A18', borderBottom: '1px solid rgba(212,168,67,0.12)', fontSize: 13,
-  padding: '8px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px 18px',
-};
-const link: React.CSSProperties = { color: '#8B9BAE', textDecoration: 'none' };
+const DIVS = [
+  ['zenflow', 'ZenFlow'], ['the-collective', 'The Collective'], ['hybrid-living', 'Hybrid Living'],
+  ['nexus-labs', 'Nexus Labs'], ['binary-loom', 'Binary Loom'], ['obsidian-arc', 'Obsidian Arc'],
+  ['quantum-ledger', 'Quantum Ledger'], ['juris-guard', 'Juris Guard'], ['signal-velocity', 'Signal Velocity'],
+];
 
-const Star = () => (
-  <svg viewBox="0 0 20 20" width="11" height="11" aria-hidden="true" style={{ color: '#D4A843', flexShrink: 0 }}>
-    <path fill="currentColor" d="M10 0 L12.4 7.6 L20 10 L12.4 12.4 L10 20 L7.6 12.4 L0 10 L7.6 7.6 Z" />
-  </svg>
-);
-
+/** Sticky header: parent wordmark, the division that runs the tool, and the one call to action. */
 export function ParentStrip() {
   return (
-    <div style={strip}>
-      <a href={SITE.main} style={{ ...link, color: '#F5F5F5', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-        <Star /> A Collective AI Inc. tool, run by The Collective
+    <header className="nav">
+      <a className="brand" href={SITE.main}>
+        <Tile mark="parent" size={34} />
+        <span><b>Collective AI Inc</b><small>Architecting a Humane Future</small></span>
       </a>
-      <span style={{ display: 'flex', gap: 18, flexWrap: 'wrap' }}>
-        <a href={`${SITE.divisions}/`} style={link}>All divisions</a>
-        <a href={SITE.hub} style={link}>Not sure? Start here</a>
+      <span className="runby">
+        <Tile mark="the-collective" size={26} />
+        <span>Run by <a href={divisionUrl('the-collective')}>The Collective</a></span>
       </span>
-    </div>
+      <span className="nav-cta">
+        <a className="btn hide-m" href={SITE.hub}>Start here</a>
+        <Link className="btn btn-gold" href="/audit">Take the audit →</Link>
+      </span>
+    </header>
   );
 }
 
 export function SiteFooter() {
   return (
-    <footer style={{ borderTop: '1px solid rgba(212,168,67,0.12)', padding: '36px 20px', color: '#8B9BAE', fontSize: 14 }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 24 }}>
-        <div style={{ maxWidth: 420 }}>
-          <a href={SITE.main} style={{ color: '#F5F5F5', textDecoration: 'none', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-            <Star /> Collective AI Inc.
-          </a>
-          <p style={{ margin: '10px 0 0', lineHeight: 1.6 }}>
+    <footer className="foot">
+      <div className="tblock">
+        <div>
+          <div className="big"><Tile mark="parent" size={40} /><span><b>Collective AI Inc</b><i>Architecting a Humane Future</i></span></div>
+          <p className="muted" style={{ fontSize: '.9rem', marginTop: 14, maxWidth: '38ch' }}>
             The AI Readiness Audit is run by The Collective, the consulting division of Collective AI Inc., Columbus, Ohio.
           </p>
-          <p style={{ margin: '8px 0 0', fontStyle: 'italic', color: '#D4A843' }}>Architecting a Humane Future</p>
         </div>
-        <nav aria-label="Collective AI" style={{ display: 'grid', gap: 10, alignContent: 'start' }}>
-          <a href={SITE.main} style={link}>Collective AI home</a>
-          <a href={`${SITE.divisions}/`} style={link}>The divisions</a>
-          <a href={`${SITE.divisions}/the-collective/`} style={link}>The Collective</a>
-          <a href={SITE.hub} style={link}>Start here</a>
-        </nav>
+        <div>
+          <span className="lab">Elsewhere</span>
+          <ul>
+            <li><a href={SITE.main}>Main site ↗</a></li>
+            <li><a href={SITE.hub}>Start here ↗</a></li>
+            <li><a href={`${SITE.divisions}/`}>Division directory ↗</a></li>
+          </ul>
+        </div>
+        <div>
+          <span className="lab">Divisions</span>
+          <ul>{DIVS.map(([s, n]) => <li key={s}><a href={divisionUrl(s)}>{n}</a></li>)}</ul>
+        </div>
       </div>
-      <p style={{ maxWidth: 1100, margin: '28px auto 0', fontSize: 13 }}>&copy; {new Date().getFullYear()} Collective AI Inc.</p>
+      <div className="legal"><span>© {new Date().getFullYear()} Collective AI Inc · Ohio C-Corporation</span><span>Sheet T-01 · AI Readiness Audit</span></div>
     </footer>
   );
 }

@@ -3,37 +3,37 @@ export const sections = [
     id: 1,
     title: 'Business Impact & Commercial Metrics',
     description: 'Help us understand your current operational baseline and ROI expectations.',
-    icon: '📊',
+    icon: '',
   },
   {
     id: 2,
     title: 'Problem Definition & Use-Case Clarity',
     description: 'Clarity on the problem is the first predictor of AI success.',
-    icon: '🎯',
+    icon: '',
   },
   {
     id: 3,
     title: 'Data Readiness',
     description: 'AI is only as good as the data feeding it. Let\'s assess yours.',
-    icon: '🗄️',
+    icon: '',
   },
   {
     id: 4,
     title: 'Organizational & Cultural Readiness',
     description: 'The human side of AI adoption is where most initiatives succeed or fail.',
-    icon: '🏢',
+    icon: '',
   },
   {
     id: 5,
     title: 'Technology & Infrastructure Fit',
     description: 'Your existing stack determines implementation speed and complexity.',
-    icon: '⚙️',
+    icon: '',
   },
   {
     id: 6,
     title: 'Ethics, Compliance & Contact Info',
     description: 'Responsible AI is our foundation. Tell us about your governance posture.',
-    icon: '🔒',
+    icon: '',
   },
 ];
 

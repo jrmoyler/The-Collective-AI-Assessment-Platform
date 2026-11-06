@@ -1,159 +1,130 @@
 import Link from 'next/link';
+import { SITE, divisionUrl } from '@/lib/links';
+import { Tile } from '@/components/Marks';
+
+// Five readiness dimensions, as drawn on the results page. Illustrative shape only: no numbers claimed.
+const DIMS = ['Strategy', 'Data', 'Culture', 'Technology', 'Governance'];
+const SHAPE = [0.78, 0.46, 0.64, 0.58, 0.36];
+
+function Pentagon() {
+  const cx = 210, cy = 210, R = 150;
+  const pt = (i: number, r: number) => {
+    const a = -Math.PI / 2 + (i * 2 * Math.PI) / 5;
+    return [cx + r * Math.cos(a), cy + r * Math.sin(a)] as const;
+  };
+  const poly = (r: number) => Array.from({ length: 5 }, (_, i) => pt(i, r).join(',')).join(' ');
+  const shape = SHAPE.map((v, i) => pt(i, v * R).join(',')).join(' ');
+  return (
+    <svg className="pent" viewBox="0 0 420 420" role="img" aria-label="Five readiness dimensions drawn as a pentagon: strategy, data, culture, technology, governance">
+      {[0.25, 0.5, 0.75, 1].map((f) => <polygon key={f} className={`ring${f === 1 ? '' : ' tick'}`} points={poly(R * f)} />)}
+      {DIMS.map((_, i) => { const [x, y] = pt(i, R); return <line key={i} className="axis" x1={cx} y1={cy} x2={x} y2={y} />; })}
+      <polygon className="shape" points={shape} />
+      {SHAPE.map((v, i) => { const [x, y] = pt(i, v * R); return <circle key={i} className="dot" cx={x} cy={y} r={3.5} />; })}
+      {DIMS.map((d, i) => {
+        const [x, y] = pt(i, R + 22);
+        const anchor = x < cx - 10 ? 'end' : x > cx + 10 ? 'start' : 'middle';
+        return <text key={d} className="lbl" x={x} y={y + 3} textAnchor={anchor}>{d}</text>;
+      })}
+      <text className="cap" x={cx} y={408} textAnchor="middle">illustrative shape · your scores draw your own</text>
+    </svg>
+  );
+}
+
+const SECTIONS = [
+  ['01', 'Business impact and commercial metrics', 'Targets, time spent on repetitive work, lead volume and conversion.'],
+  ['02', 'Problem definition and use-case clarity', 'How specific the AI use cases are, who sponsors them, the outcome timeline.'],
+  ['03', 'Data readiness', 'Where the data lives, how clean it is, who governs it.'],
+  ['04', 'Organizational and cultural readiness', 'Team openness, internal capacity, leadership alignment.'],
+  ['05', 'Technology and infrastructure fit', 'Stack compatibility, operations maturity, room to scale.'],
+  ['06', 'Ethics, governance and compliance', 'Responsible-AI policies and the regulatory ground you stand on.'],
+];
+
+const ROUTES: [string, string, string][] = [
+  ['Strategy', 'the-collective', 'The Collective'],
+  ['Data', 'binary-loom', 'Binary Loom'],
+  ['Culture', 'hybrid-living', 'Hybrid Living'],
+  ['Technology', 'zenflow', 'ZenFlow'],
+  ['Governance', 'juris-guard', 'Juris Guard'],
+];
 
 export default function Home() {
   return (
-    <main style={{ backgroundColor: '#0B0F1C', minHeight: '100vh', color: '#F5F5F5' }}>
-      {/* Nav */}
-      <nav style={{ borderBottom: '1px solid rgba(212,168,67,0.15)', padding: '20px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ width: 36, height: 36, borderRadius: '50%', border: '2px solid #D4A843', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 800, color: '#D4A843' }}>C</div>
-          <div>
-            <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: '0.1em', color: '#F5F5F5' }}>THE COLLECTIVE</div>
-            <div style={{ fontSize: 10, color: '#8B9BAE', letterSpacing: '0.15em' }}>COLLECTIVE AI</div>
-          </div>
-        </div>
-        <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-          <span style={{ color: '#8B9BAE', fontSize: 14 }}>AI Strategy. Built to Last.</span>
-          <Link href="/audit" style={{ background: '#D4A843', color: '#0B0F1C', padding: '10px 24px', borderRadius: 8, fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>
-            Start Free Audit
-          </Link>
-        </div>
-      </nav>
+    <main className="sheet">
+      <div className="sheet-head"><span className="mono"><b>T-01</b> · AI Readiness Audit</span><span className="mono">Run by The Collective · Collective AI Inc</span></div>
 
-      {/* Hero */}
-      <section style={{ maxWidth: 1100, margin: '0 auto', padding: '100px 40px 80px', textAlign: 'center' }}>
-        <div style={{ display: 'inline-block', background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 20, padding: '6px 18px', fontSize: 13, color: '#D4A843', marginBottom: 32, fontWeight: 600, letterSpacing: '0.05em' }}>
-          FREE 6-MINUTE ASSESSMENT
-        </div>
-        <h1 style={{ fontSize: 'clamp(36px, 6vw, 72px)', fontWeight: 800, lineHeight: 1.1, marginBottom: 24, letterSpacing: '-0.02em' }}>
-          How Many Hours Is Your<br />
-          <span style={{ background: 'linear-gradient(135deg, #D4A843, #f0c866)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-            Team Leaving on the Table?
-          </span>
-        </h1>
-        <p style={{ fontSize: 20, color: '#8B9BAE', maxWidth: 640, margin: '0 auto 48px', lineHeight: 1.6 }}>
-          Twenty-five questions about how your business runs today. You get five readiness scores, an estimate of the hours AI could give back, and a list of where to start.
-        </p>
-        <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link href="/audit" style={{ background: '#D4A843', color: '#0B0F1C', padding: '18px 48px', borderRadius: 10, fontWeight: 800, fontSize: 18, textDecoration: 'none', display: 'inline-block', boxShadow: '0 0 40px rgba(212,168,67,0.25)' }}>
-            Take the Free AI Readiness Audit →
-          </Link>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#8B9BAE', fontSize: 14 }}>
-            <span>✓</span> No credit card. No commitment.
-          </div>
-        </div>
-      </section>
-
-      {/* Stats */}
-      <section style={{ borderTop: '1px solid rgba(212,168,67,0.1)', borderBottom: '1px solid rgba(212,168,67,0.1)', padding: '60px 40px', background: 'rgba(26,32,64,0.3)' }}>
-        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 40, textAlign: 'center' }}>
-          {[
-            { stat: '25', label: 'Questions', sub: 'Across six sections of your business' },
-            { stat: '~6 min', label: 'To finish', sub: 'Most people are done in one sitting' },
-            { stat: '5', label: 'Readiness scores', sub: 'Strategy, data, culture, tech, governance' },
-            { stat: 'Free', label: 'No card needed', sub: 'Your report appears as soon as you finish' },
-          ].map((item) => (
-            <div key={item.stat}>
-              <div style={{ fontSize: 40, fontWeight: 800, color: '#D4A843', marginBottom: 8 }}>{item.stat}</div>
-              <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>{item.label}</div>
-              <div style={{ fontSize: 13, color: '#8B9BAE' }}>{item.sub}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section style={{ maxWidth: 1100, margin: '0 auto', padding: '80px 40px' }}>
-        <div style={{ textAlign: 'center', marginBottom: 60 }}>
-          <h2 style={{ fontSize: 40, fontWeight: 800, marginBottom: 16 }}>What You&apos;ll Walk Away With</h2>
-          <p style={{ color: '#8B9BAE', fontSize: 18 }}>A 25-question audit. An AI-powered analysis. A concrete action plan.</p>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
-          {[
-            { icon: '📊', title: 'Your AI Readiness Score', desc: 'A composite score across 5 dimensions: strategy, data, culture, technology, and governance.' },
-            { icon: '⏱️', title: 'Hours Saved Per Week', desc: 'An estimate of the hours AI could save each week, based on how you answered.' },
-            { icon: '🤖', title: 'Recommended AI Agents', desc: 'Specific AI agents and workflows tailored to your business problems and industry.' },
-            { icon: '📈', title: 'ROI Projection', desc: 'A rough efficiency and return estimate for a business like yours. Treat it as a starting point.' },
-            { icon: '🗺️', title: 'Implementation Roadmap', desc: 'Prioritized steps from where you are today, plus the Collective AI division best suited to your weakest score.' },
-            { icon: '📞', title: 'Strategy Call (if qualified)', desc: 'High-readiness organizations get a direct invitation to a 30-minute strategy call with our team.' },
-          ].map((item) => (
-            <div key={item.title} style={{ background: 'rgba(26,32,64,0.5)', border: '1px solid rgba(212,168,67,0.12)', borderRadius: 12, padding: 28 }}>
-              <div style={{ fontSize: 32, marginBottom: 16 }}>{item.icon}</div>
-              <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 10 }}>{item.title}</h3>
-              <p style={{ color: '#8B9BAE', fontSize: 14, lineHeight: 1.6 }}>{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* The Audit Process */}
-      <section style={{ background: 'rgba(26,32,64,0.2)', padding: '80px 40px' }}>
-        <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center' }}>
-          <h2 style={{ fontSize: 40, fontWeight: 800, marginBottom: 16 }}>6 Sections. 25 Questions. About 6 Minutes.</h2>
-          <p style={{ color: '#8B9BAE', fontSize: 18, marginBottom: 60 }}>The same ground a consultant covers in a first meeting, in six sections.</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            {[
-              { num: '01', title: 'Business Impact & Commercial Metrics', desc: 'ROI targets, time spent on repetitive tasks, lead volume and conversion rates' },
-              { num: '02', title: 'Problem Definition & Use-Case Clarity', desc: 'Specificity of AI use cases, executive sponsorship, outcome timeline' },
-              { num: '03', title: 'Data Readiness', desc: 'Centralization, quality, governance policies' },
-              { num: '04', title: 'Organizational & Cultural Readiness', desc: 'Team openness, internal capacity, leadership alignment' },
-              { num: '05', title: 'Technology & Infrastructure Fit', desc: 'Stack compatibility, MLOps maturity, scalability' },
-              { num: '06', title: 'Ethics, Governance & Compliance', desc: 'Responsible AI policies, regulatory environment' },
-            ].map((section) => (
-              <div key={section.num} style={{ display: 'flex', gap: 24, alignItems: 'flex-start', textAlign: 'left', background: 'rgba(11,15,28,0.5)', border: '1px solid rgba(212,168,67,0.1)', borderRadius: 10, padding: '20px 24px' }}>
-                <div style={{ fontSize: 28, fontWeight: 900, color: 'rgba(212,168,67,0.3)', fontVariantNumeric: 'tabular-nums', flexShrink: 0 }}>{section.num}</div>
-                <div>
-                  <div style={{ fontWeight: 700, marginBottom: 4 }}>{section.title}</div>
-                  <div style={{ color: '#8B9BAE', fontSize: 14 }}>{section.desc}</div>
-                </div>
+      <div className="block">
+        <div className="margin"><b>§ 01</b>The audit<small>Twenty-five questions. About six minutes. Five scores.</small></div>
+        <div className="body">
+          <div className="scoreplan">
+            <div>
+              <h1>Where does your business <span className="accent">actually</span> stand with AI?</h1>
+              <p className="lede" style={{ marginTop: 24 }}>Twenty-five questions about how your business runs today. You get five readiness scores, an estimate of the hours AI could give back each week, and the Collective AI division to call first.</p>
+              <div className="actions" style={{ marginTop: 28 }}>
+                <Link className="btn btn-gold btn-lg" href="/audit">Take the free audit →</Link>
+                <span className="mono">No card · no commitment</span>
               </div>
-            ))}
+              <div className="facts" style={{ marginTop: 36 }}>
+                <div><b>25</b><span>Questions</span></div>
+                <div><b>~6</b><span>Minutes</span></div>
+                <div><b>5</b><span>Scores</span></div>
+                <div><b>Free</b><span>Report on finish</span></div>
+              </div>
+            </div>
+            <Pentagon />
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Trust Signals */}
-      <section style={{ maxWidth: 1100, margin: '0 auto', padding: '80px 40px', textAlign: 'center' }}>
-        <div style={{ marginBottom: 48 }}>
-          <h2 style={{ fontSize: 36, fontWeight: 800, marginBottom: 16 }}>Built by The Collective</h2>
-          <p style={{ color: '#8B9BAE', maxWidth: 560, margin: '0 auto', fontSize: 16, lineHeight: 1.7 }}>
-            Columbus, Ohio&apos;s AI strategy practice. We built this audit from the same frameworks we use with mid-market enterprises. Not a quiz. A diagnostic tool.
-          </p>
+      <div className="block">
+        <div className="margin"><b>§ 02</b>You get<small>Everything appears the moment you finish.</small></div>
+        <div className="body">
+          <h2>What comes back</h2>
+          <ul className="rows">
+            <li><span className="k">SCORE</span><div><strong>Five readiness scores and one overall</strong><p>Strategy, data, culture, technology, governance. Each scored on what you told us, not on an industry average.</p></div></li>
+            <li><span className="k">HOURS</span><div><strong>Hours per week AI could give back</strong><p>An estimate built from how much of your week is repetitive work. Treat it as a starting point for the conversation, not a promise.</p></div></li>
+            <li><span className="k">AGENTS</span><div><strong>Which agents and workflows fit</strong><p>Specific to your industry, size and answers. Not a generic list.</p></div></li>
+            <li><span className="k">ROADMAP</span><div><strong>Prioritized next steps</strong><p>Ordered from where you are today, with the lowest score first.</p></div></li>
+            <li><span className="k">ROUTE</span><div><strong>The division to call first</strong><p>Your weakest dimension maps to the Collective AI division built to fix it. See the routing below.</p></div></li>
+            <li><span className="k">CALL</span><div><strong>A strategy call, if it fits</strong><p>High-readiness organizations get a direct invitation to a 30-minute call with The Collective.</p></div></li>
+          </ul>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 20 }}>
-          {[
-            { icon: '🔒', text: 'Your data is encrypted and never shared' },
-            { icon: '🚫', text: 'No spam. One follow-up only.' },
-            { icon: '⚡', text: 'Instant AI-powered results' },
-            { icon: '🎯', text: 'Tailored to your industry and size' },
-          ].map((item) => (
-            <div key={item.text} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 20px', background: 'rgba(26,32,64,0.4)', borderRadius: 10, border: '1px solid rgba(139,155,174,0.1)' }}>
-              <span style={{ fontSize: 20 }}>{item.icon}</span>
-              <span style={{ fontSize: 14, color: '#8B9BAE' }}>{item.text}</span>
-            </div>
-          ))}
-        </div>
-      </section>
+      </div>
 
-      {/* Final CTA */}
-      <section style={{ padding: '80px 40px', textAlign: 'center', borderTop: '1px solid rgba(212,168,67,0.1)' }}>
-        <div style={{ maxWidth: 700, margin: '0 auto' }}>
-          <h2 style={{ fontSize: 48, fontWeight: 800, marginBottom: 20 }}>
-            Start Your Audit.<br />
-            <span style={{ background: 'linear-gradient(135deg, #D4A843, #f0c866)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-              Get Your Score in Minutes.
-            </span>
-          </h2>
-          <p style={{ color: '#8B9BAE', fontSize: 18, marginBottom: 40 }}>
-            AI that augments humans. Not replaces them. Let&apos;s find out if you&apos;re ready.
-          </p>
-          <Link href="/audit" style={{ background: '#D4A843', color: '#0B0F1C', padding: '20px 60px', borderRadius: 10, fontWeight: 800, fontSize: 20, textDecoration: 'none', display: 'inline-block', boxShadow: '0 0 60px rgba(212,168,67,0.3)' }}>
-            Take the Free AI Readiness Audit →
-          </Link>
-          <div style={{ marginTop: 20, color: '#8B9BAE', fontSize: 14 }}>About 6 minutes · Instant results · No credit card required</div>
+      <div className="block">
+        <div className="margin"><b>§ 03</b>Routing<small>Lowest score decides who you talk to.</small></div>
+        <div className="body">
+          <h2>Your weakest score picks the division</h2>
+          <ol className="routes">
+            {ROUTES.map(([dim, slug, name]) => (
+              <li key={slug}><span className="dimn">{dim} is lowest →</span><a href={divisionUrl(slug)}><Tile mark={slug} size={30} />{name}</a></li>
+            ))}
+          </ol>
+          <p className="muted" style={{ fontSize: '.92rem' }}>Data and technology gaps often route to two divisions at once; the results page shows both.</p>
         </div>
-      </section>
+      </div>
 
+      <div className="block">
+        <div className="margin"><b>§ 04</b>The ground covered<small>Six sections. The same ground a first consulting meeting covers.</small></div>
+        <div className="body">
+          <h2>Six sections, twenty-five questions</h2>
+          <ul className="rows">
+            {SECTIONS.map(([n, t, d]) => <li key={n}><span className="k">{n}</span><div><strong>{t}</strong><p>{d}</p></div></li>)}
+          </ul>
+        </div>
+      </div>
+
+      <div className="block">
+        <div className="margin"><b>§ 05</b>Who built it<small>The Collective, Columbus, Ohio.</small></div>
+        <div className="body">
+          <h2>Built from the frameworks we use with clients</h2>
+          <p className="lede">The Collective is the AI strategy consulting division of Collective AI Inc. This audit is the first thing we run in a real engagement, opened up so you can run it yourself. Your answers are stored encrypted and used for one follow-up, if you ask for one.</p>
+          <div className="actions" style={{ marginTop: 28 }}>
+            <Link className="btn btn-gold btn-lg" href="/audit">Take the free audit →</Link>
+            <a className="btn" href={divisionUrl('the-collective')}>About The Collective ↗</a>
+            <a className="btn" href={SITE.main}>Collective AI Inc ↗</a>
+          </div>
+        </div>
+      </div>
     </main>
   );
 }
