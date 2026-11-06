@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AssessmentResult, AuditAnswers } from '@/types';
+import { SITE, divisionUrl, pickDivisions } from '@/lib/links';
 import {
   RadarChart,
   PolarGrid,
@@ -110,6 +111,9 @@ export default function ResultsClient() {
     ? `${calendlyBase}?name=${encodeURIComponent(contactName)}&email=${encodeURIComponent(contactEmail)}&a1=${encodeURIComponent(companyName)}&a2=${result.overall_readiness}`
     : calendlyBase;
 
+  const { gap, picks } = pickDivisions(result.readiness_scores);
+  const gapLabel = { strategy: 'Strategy', data: 'Data', culture: 'Culture', tech: 'Technology', governance: 'Governance' }[gap];
+
   const getBarColor = (score: number) => {
     if (score >= 75) return '#10b981';
     if (score >= 50) return '#D4A843';
@@ -127,7 +131,7 @@ export default function ResultsClient() {
         <div style={{ fontSize: 13, color: '#8B9BAE' }}>Your AI Readiness Report</div>
       </div>
 
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '60px 40px' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '60px clamp(16px, 5vw, 40px)' }}>
         {/* High Priority Banner */}
         {isHighPriority && (
           <div style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.1), rgba(212,168,67,0.08))', border: '1px solid rgba(16,185,129,0.3)', borderRadius: 12, padding: '20px 28px', marginBottom: 40, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
@@ -149,7 +153,7 @@ export default function ResultsClient() {
         </div>
 
         {/* Main score + time savings */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24, marginBottom: 40 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(300px, 100%), 1fr))', gap: 24, marginBottom: 40 }}>
           {/* Overall Score */}
           <div style={{ background: 'rgba(26,32,64,0.6)', border: '1px solid rgba(212,168,67,0.15)', borderRadius: 16, padding: 40, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
             <div style={{ fontSize: 14, color: '#8B9BAE', fontWeight: 600, letterSpacing: '0.08em', marginBottom: 24 }}>OVERALL AI READINESS</div>
@@ -190,7 +194,7 @@ export default function ResultsClient() {
         </div>
 
         {/* Charts Row */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: 24, marginBottom: 40 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(400px, 100%), 1fr))', gap: 24, marginBottom: 40 }}>
           {/* Radar Chart */}
           <div style={{ background: 'rgba(26,32,64,0.6)', border: '1px solid rgba(212,168,67,0.15)', borderRadius: 16, padding: 32 }}>
             <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 24 }}>Readiness Dimensions</div>
@@ -266,7 +270,7 @@ export default function ResultsClient() {
         {/* Recommended Agents */}
         <div style={{ marginBottom: 40 }}>
           <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 24 }}>Recommended AI Agents for Your Business</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(260px, 100%), 1fr))', gap: 16 }}>
             {result.recommended_agents.map((agent, i) => (
               <div key={i} style={{ background: 'rgba(26,32,64,0.5)', border: '1px solid rgba(212,168,67,0.12)', borderRadius: 10, padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 14 }}>
                 <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0 }}>🤖</div>
@@ -274,6 +278,26 @@ export default function ResultsClient() {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Division routing: who at Collective AI helps with the weakest score */}
+        <div style={{ marginBottom: 40 }}>
+          <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>Where to get help first</h2>
+          <p style={{ color: '#8B9BAE', fontSize: 15, marginBottom: 24, lineHeight: 1.6 }}>
+            Your lowest score is <strong style={{ color: '#F5F5F5' }}>{gapLabel} ({result.readiness_scores[gap]}/100)</strong>. These Collective AI divisions work on exactly that.
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(260px, 100%), 1fr))', gap: 16 }}>
+            {picks.map((d) => (
+              <a key={d.slug} href={divisionUrl(d.slug)} style={{ background: 'rgba(26,32,64,0.5)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: 10, padding: '20px 22px', textDecoration: 'none', color: '#F5F5F5', display: 'grid', gap: 8 }}>
+                <span style={{ fontWeight: 700, fontSize: 18 }}>{d.name}</span>
+                <span style={{ color: '#8B9BAE', fontSize: 14, lineHeight: 1.55 }}>{d.why}</span>
+                <span style={{ color: '#D4A843', fontSize: 14, fontWeight: 600 }}>Visit {d.name} &rarr;</span>
+              </a>
+            ))}
+          </div>
+          <p style={{ color: '#8B9BAE', fontSize: 14, marginTop: 16 }}>
+            Want to see everything? <a href={`${SITE.divisions}/`} style={{ color: '#D4A843' }}>Browse all nine divisions</a>.
+          </p>
         </div>
 
         {/* CTA Section */}

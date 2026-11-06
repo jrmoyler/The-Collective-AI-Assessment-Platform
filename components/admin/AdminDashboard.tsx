@@ -48,29 +48,32 @@ export default function AdminDashboard() {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [authError, setAuthError] = useState('');
 
-  const fetchData = useCallback(async (user: string, pass: string) => {
+  const fetchData = useCallback(async (user: string, pass: string): Promise<boolean> => {
     setLoading(true);
-    const token = Buffer.from(`${user}:${pass}`).toString('base64');
+    const token = btoa(unescape(encodeURIComponent(`${user}:${pass}`)));
     const res = await fetch('/api/submissions', { headers: { Authorization: `Basic ${token}` } });
     if (!res.ok) {
       setAuthError('Invalid credentials');
       setLoading(false);
-      return;
+      return false;
     }
     const data = await res.json();
     setSubmissions(data.submissions || []);
     setLoading(false);
+    return true;
   }, []);
 
   const handleLogin = async (user: string, pass: string) => {
-    setCreds({ user, pass });
-    setAuthed(true);
     setAuthError('');
-    await fetchData(user, pass);
+    const ok = await fetchData(user, pass);
+    if (ok) {
+      setCreds({ user, pass });
+      setAuthed(true);
+    }
   };
 
   const markContacted = async (id: string, contacted: boolean) => {
-    const token = Buffer.from(`${creds.user}:${creds.pass}`).toString('base64');
+    const token = btoa(unescape(encodeURIComponent(`${creds.user}:${creds.pass}`)));
     await fetch('/api/update-contacted', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Basic ${token}` },

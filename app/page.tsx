@@ -23,7 +23,7 @@ export default function Home() {
       {/* Hero */}
       <section style={{ maxWidth: 1100, margin: '0 auto', padding: '100px 40px 80px', textAlign: 'center' }}>
         <div style={{ display: 'inline-block', background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 20, padding: '6px 18px', fontSize: 13, color: '#D4A843', marginBottom: 32, fontWeight: 600, letterSpacing: '0.05em' }}>
-          FREE 5–7 MINUTE ASSESSMENT
+          FREE 6-MINUTE ASSESSMENT
         </div>
         <h1 style={{ fontSize: 'clamp(36px, 6vw, 72px)', fontWeight: 800, lineHeight: 1.1, marginBottom: 24, letterSpacing: '-0.02em' }}>
           How Many Hours Is Your<br />
@@ -32,7 +32,7 @@ export default function Home() {
           </span>
         </h1>
         <p style={{ fontSize: 20, color: '#8B9BAE', maxWidth: 640, margin: '0 auto 48px', lineHeight: 1.6 }}>
-          Discover exactly how many hours your team can reclaim every week with AI agents — and whether you&apos;re truly ready to implement them successfully.
+          Twenty-five questions about how your business runs today. You get five readiness scores, an estimate of the hours AI could give back, and a list of where to start.
         </p>
         <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
           <Link href="/audit" style={{ background: '#D4A843', color: '#0B0F1C', padding: '18px 48px', borderRadius: 10, fontWeight: 800, fontSize: 18, textDecoration: 'none', display: 'inline-block', boxShadow: '0 0 40px rgba(212,168,67,0.25)' }}>
@@ -48,10 +48,10 @@ export default function Home() {
       <section style={{ borderTop: '1px solid rgba(212,168,67,0.1)', borderBottom: '1px solid rgba(212,168,67,0.1)', padding: '60px 40px', background: 'rgba(26,32,64,0.3)' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 40, textAlign: 'center' }}>
           {[
-            { stat: '10–25 hrs', label: 'Reclaimed per week', sub: 'Average for SMBs post-implementation' },
-            { stat: '30%+', label: 'Efficiency gain', sub: 'Typical across marketing & sales' },
-            { stat: '< 90 days', label: 'To first ROI', sub: 'For high-readiness organizations' },
-            { stat: '500+', label: 'AI implementations', sub: 'Assessed across industries' },
+            { stat: '25', label: 'Questions', sub: 'Across six sections of your business' },
+            { stat: '~6 min', label: 'To finish', sub: 'Most people are done in one sitting' },
+            { stat: '5', label: 'Readiness scores', sub: 'Strategy, data, culture, tech, governance' },
+            { stat: 'Free', label: 'No card needed', sub: 'Your report appears as soon as you finish' },
           ].map((item) => (
             <div key={item.stat}>
               <div style={{ fontSize: 40, fontWeight: 800, color: '#D4A843', marginBottom: 8 }}>{item.stat}</div>
@@ -71,10 +71,10 @@ export default function Home() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
           {[
             { icon: '📊', title: 'Your AI Readiness Score', desc: 'A composite score across 5 dimensions: strategy, data, culture, technology, and governance.' },
-            { icon: '⏱️', title: 'Hours Saved Per Week', desc: 'Exact time-savings estimate based on your current operations and AI readiness profile.' },
+            { icon: '⏱️', title: 'Hours Saved Per Week', desc: 'An estimate of the hours AI could save each week, based on how you answered.' },
             { icon: '🤖', title: 'Recommended AI Agents', desc: 'Specific AI agents and workflows tailored to your business problems and industry.' },
-            { icon: '📈', title: 'ROI Projection', desc: 'Estimated efficiency gain and first-year return on AI investment for your business profile.' },
-            { icon: '🗺️', title: 'Implementation Roadmap', desc: 'Prioritized steps to move from where you are today to production-grade AI deployment.' },
+            { icon: '📈', title: 'ROI Projection', desc: 'A rough efficiency and return estimate for a business like yours. Treat it as a starting point.' },
+            { icon: '🗺️', title: 'Implementation Roadmap', desc: 'Prioritized steps from where you are today, plus the Collective AI division best suited to your weakest score.' },
             { icon: '📞', title: 'Strategy Call (if qualified)', desc: 'High-readiness organizations get a direct invitation to a 30-minute strategy call with our team.' },
           ].map((item) => (
             <div key={item.title} style={{ background: 'rgba(26,32,64,0.5)', border: '1px solid rgba(212,168,67,0.12)', borderRadius: 12, padding: 28 }}>
@@ -89,8 +89,8 @@ export default function Home() {
       {/* The Audit Process */}
       <section style={{ background: 'rgba(26,32,64,0.2)', padding: '80px 40px' }}>
         <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center' }}>
-          <h2 style={{ fontSize: 40, fontWeight: 800, marginBottom: 16 }}>6 Sections. 25 Questions. 5 Minutes.</h2>
-          <p style={{ color: '#8B9BAE', fontSize: 18, marginBottom: 60 }}>Built from verified AI consultant frameworks used by enterprise teams.</p>
+          <h2 style={{ fontSize: 40, fontWeight: 800, marginBottom: 16 }}>6 Sections. 25 Questions. About 6 Minutes.</h2>
+          <p style={{ color: '#8B9BAE', fontSize: 18, marginBottom: 60 }}>The same ground a consultant covers in a first meeting, in six sections.</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {[
               { num: '01', title: 'Business Impact & Commercial Metrics', desc: 'ROI targets, time spent on repetitive tasks, lead volume and conversion rates' },
@@ -150,15 +150,10 @@ export default function Home() {
           <Link href="/audit" style={{ background: '#D4A843', color: '#0B0F1C', padding: '20px 60px', borderRadius: 10, fontWeight: 800, fontSize: 20, textDecoration: 'none', display: 'inline-block', boxShadow: '0 0 60px rgba(212,168,67,0.3)' }}>
             Take the Free AI Readiness Audit →
           </Link>
-          <div style={{ marginTop: 20, color: '#8B9BAE', fontSize: 14 }}>5–7 minutes · Instant results · No credit card required</div>
+          <div style={{ marginTop: 20, color: '#8B9BAE', fontSize: 14 }}>About 6 minutes · Instant results · No credit card required</div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer style={{ borderTop: '1px solid rgba(212,168,67,0.1)', padding: '32px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-        <div style={{ color: '#8B9BAE', fontSize: 13 }}>© 2026 Collective AI — The Collective. Columbus, Ohio.</div>
-        <div style={{ color: '#8B9BAE', fontSize: 13 }}>AI Strategy. Built to Last.</div>
-      </footer>
     </main>
   );
 }

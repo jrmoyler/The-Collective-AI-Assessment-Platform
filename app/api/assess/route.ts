@@ -3,9 +3,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { getServiceClient } from '@/lib/supabase';
 import { AuditAnswers, AssessmentResult } from '@/types';
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY!,
-});
+import { forwardLead } from '@/lib/leadWebhook';
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,6 +13,14 @@ export async function POST(req: NextRequest) {
     if (!answers) {
       return NextResponse.json({ error: 'No answers provided' }, { status: 400 });
     }
+    if (!/^\S+@\S+\.\S+$/.test(String(answers.q25_contact_email || ''))) {
+      return NextResponse.json({ error: 'A valid email is required' }, { status: 400 });
+    }
+    if (!process.env.ANTHROPIC_API_KEY) {
+      console.error('ANTHROPIC_API_KEY is not set');
+      return NextResponse.json({ error: 'Assessment is not configured' }, { status: 503 });
+    }
+    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
     const systemPrompt = `You are The Collective's senior AI consultant at Collective AI, a premier AI strategy practice based in Columbus, Ohio. 
 
@@ -118,7 +124,7 @@ ETHICS & CONTEXT:
 Return ONLY the JSON assessment object.`;
 
     const message = await anthropic.messages.create({
-      model: 'claude-opus-4-5',
+      model: process.env.ANTHROPIC_MODEL || 'claude-opus-4-5',
       max_tokens: 1500,
       system: systemPrompt,
       messages: [{ role: 'user', content: userMessage }],
@@ -132,7 +138,7 @@ Return ONLY the JSON assessment object.`;
       assessment = JSON.parse(cleaned);
     } catch {
       console.error('Failed to parse Claude response:', responseText);
-      return NextResponse.json({ error: 'Failed to parse assessment' }, { status: 500 });
+      return NextResponse.json({ error: 'The analysis came back malformed. Please submit again.' }, { status: 502 });
     }
 
     // Store in Supabase
@@ -163,6 +169,9 @@ Return ONLY the JSON assessment object.`;
     } catch (dbError) {
       console.error('DB error:', dbError);
     }
+
+    // Copy the lead into the Collective AI Leads table (Airtable).
+    await forwardLead(answers, assessment);
 
     return NextResponse.json({ assessment });
   } catch (error) {

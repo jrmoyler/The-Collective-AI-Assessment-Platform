@@ -35,6 +35,11 @@ Required env vars:
 - ADMIN_USERNAME
 - ADMIN_PASSWORD
 - NEXT_PUBLIC_CALENDLY_URL
+- AIRTABLE_LEAD_WEBHOOK (sends every finished audit to the Collective AI Leads table as a The Collective lead)
+
+The admin dashboard stays locked until ADMIN_USERNAME and ADMIN_PASSWORD are set; there is no default login.
+
+Links to the main site, the Start here hub and the division sites are set in `lib/links.ts`.
 
 ## Routes
 
