@@ -108,7 +108,7 @@ export default function AuditForm() {
   const sectionDone = sectionQs.filter((q) => { const v = valueOf(q.id); return v !== undefined && v !== ''; }).length;
 
   return (
-    <div className="flow">
+    <main className="flow">
       <SilkField intensity={0.55} />
       <div className="veilgrad" />
       <div className="flow-bar" role="progressbar" aria-label="Questions answered" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}><i style={{ width: `${progress}%` }} /></div>
@@ -124,10 +124,10 @@ export default function AuditForm() {
               </li>
             ))}
           </ol>
-          <div className="note"><b>{answered} / {questions.length}</b>answered · saved on this device</div>
+          <div className="note"><b>{answered} / {questions.length}</b>answered, saved on this device</div>
         </aside>
 
-        <main>
+        <div className="flow-main">
           <nav className="mobile-sections" aria-label="Audit sections">{sections.map((s) => <button key={s.id} type="button" disabled={s.id > reached} aria-current={s.id === current ? 'step' : undefined} aria-label={`Section ${s.id}: ${s.title}`} onClick={() => goTo(s.id)}>{String(s.id).padStart(2, '0')}</button>)}</nav>
           <header className="qhead">
             <div className="audit-status"><span className="kicker">Section {current} of {total}</span><span className="mono">{progress}% complete · saved locally</span></div>
@@ -154,11 +154,11 @@ export default function AuditForm() {
           <nav className="flow-nav" aria-label="Audit navigation">
             {current > 1 ? <button type="button" className="btn" onClick={() => goTo(current - 1)}>← Back</button> : <span />}
             <span className="count">{sectionDone} of {sectionQs.length} in this section</span>
-            <button type="button" className="btn btn-gold" onClick={next}>{current === total ? 'Get my readiness report →' : 'Continue →'}</button>
+            <button type="button" className="btn btn-gold" onClick={next}>{current === total ? 'Get my readiness report' : 'Continue'}</button>
           </nav>
           <div style={{ height: 40 }} />
-        </main>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

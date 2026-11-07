@@ -76,8 +76,8 @@ export default function ResultsClient() {
       <main className="sheet" style={{ position: 'relative', zIndex: 1 }}>
         <section className="rhead" id="report-summary">
           <div>
-            <div className="kicker">AI readiness report{company ? ` · ${company}` : ''}</div>
-            <h1>{first ? `${first}, here is` : 'Here is'} where you <em>stand</em>.</h1>
+            <div className="kicker">AI readiness report{company ? ` for ${company}` : ''}</div>
+            <h1>{first ? `${first}, here is` : 'Here is'} where you stand.</h1>
             <p className="lede" style={{ marginTop: 22 }}>Five scores out of 100, the hours AI could realistically hand back each week, and the division to call first.</p>
           </div>
           <div className="scorecard">
@@ -158,10 +158,10 @@ export default function ResultsClient() {
             <h2>{high ? 'You qualify for a direct strategy call.' : 'Talk it through with The Collective.'}</h2>
             <p>{high ? 'Thirty minutes with the team to pick your first two workflows and how to measure them. Your answers come with you, so there is no intake form.' : `Thirty minutes on closing your ${gapLabel.toLowerCase()} gap and what a first project would look like once it is closed.`}</p>
             <div className="actions">
-              <a className="btn btn-gold" href={calendlyUrl} target="_blank" rel="noopener" style={{ padding: '15px 22px' }}>Book the strategy call →</a>
+              <a className="btn btn-gold" href={calendlyUrl} target="_blank" rel="noopener" style={{ padding: '15px 22px' }}>Book the strategy call</a>
               <a className="btn" href={SITE.hub} style={{ borderColor: 'rgba(254,243,199,.35)' }}>Other ways to work with us</a>
             </div>
-            <span className="small">Free · no obligation · 30 minutes</span>
+            <span className="small">Free, no obligation, 30 minutes</span>
           </div>
           <div className="actions" style={{ marginTop: 24 }}>
             <button type="button" className="btn" onClick={() => window.print()}>Save as PDF</button>

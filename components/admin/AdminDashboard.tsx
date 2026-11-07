@@ -17,7 +17,7 @@ function LoginForm({ onLogin, loading, error }: { onLogin: (u: string, p: string
     <main className="admin-login">
       <div className="login-intro">
         <Tile mark="the-collective" size={52} />
-        <span className="kicker" style={{ marginTop: 28 }}>The Collective · Operations</span>
+        <span className="kicker" style={{ marginTop: 28 }}>The Collective operations</span>
         <h1>From insight<br />to action.</h1>
         <p>Review readiness reports, identify the next conversation, and keep outreach moving with a clear view of the work.</p>
       </div>
@@ -29,7 +29,7 @@ function LoginForm({ onLogin, loading, error }: { onLogin: (u: string, p: string
         <label htmlFor="admin-password">Password</label>
         <input id="admin-password" type="password" autoComplete="current-password" required value={p} onChange={e => setP(e.target.value)} />
         {error && <p className="banner" role="alert">{error}</p>}
-        <button className="btn btn-gold" type="submit" disabled={loading}>{loading ? 'Connecting…' : 'Access dashboard →'}</button>
+        <button className="btn btn-gold" type="submit" disabled={loading}>{loading ? 'Connecting…' : 'Access dashboard'}</button>
       </form>
     </main>
   );

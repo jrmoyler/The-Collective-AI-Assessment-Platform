@@ -22,7 +22,7 @@ export function ParentStrip() {
       </span>
       <span className="nav-cta">
         <a className="btn hide-m" href={SITE.hub}>Start here</a>
-        <Link className="btn btn-gold" href="/audit">Take the audit →</Link>
+        <Link className="btn btn-gold" href="/audit">Take the audit</Link>
       </span>
     </header>
   );
@@ -51,7 +51,7 @@ export function SiteFooter() {
           <ul>{DIVS.map(([s, n]) => <li key={s}><a href={divisionUrl(s)}>{n}</a></li>)}</ul>
         </div>
       </div>
-      <div className="legal"><span>© {new Date().getFullYear()} Collective AI Inc · Ohio C-Corporation</span><span>Sheet T-01 · AI Readiness Audit</span></div>
+      <div className="legal"><span>© {new Date().getFullYear()} Collective AI Inc, an Ohio C-Corporation</span><span>Sheet T-01, AI Readiness Audit</span></div>
     </footer>
   );
 }

@@ -26,7 +26,7 @@ export default function LoadingAssessment() {
       <div className="veilgrad" />
       <section className="analyzing" aria-live="polite" aria-busy="true">
         <div className="box">
-          <div className="kicker">The Collective · analyzing</div>
+          <div className="kicker">The Collective is reading your answers</div>
           <h1>Building your readiness report.</h1>
           <p className="muted" style={{ marginTop: 14 }}>This usually takes 10 to 30 seconds. Keep this tab open.</p>
           <ol>

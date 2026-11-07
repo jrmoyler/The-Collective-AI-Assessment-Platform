@@ -26,7 +26,7 @@ function Pentagon() {
         const anchor = x < cx - 10 ? 'end' : x > cx + 10 ? 'start' : 'middle';
         return <text key={d} className="lbl" x={x} y={y + 3} textAnchor={anchor}>{d}</text>;
       })}
-      <text className="cap" x={cx} y={408} textAnchor="middle">illustrative shape · your scores draw your own</text>
+      <text className="cap" x={cx} y={408} textAnchor="middle">Illustrative shape. Your scores draw your own.</text>
     </svg>
   );
 }
@@ -54,24 +54,24 @@ export default function Home() {
     <SilkField />
     <div className="veilgrad" />
     <main className="sheet landing-sheet" style={{ position: 'relative', zIndex: 1 }}>
-      <figure className="audit-art"><picture><source media="(max-width: 700px)" srcSet="/img/collective-atrium-800.webp" /><img src="/img/collective-atrium-1600.webp" alt="Architectural concept of a shared research atrium with a living courtyard" width="1600" height="900" fetchPriority="high" /></picture><figcaption>Collective AI · architectural concept</figcaption><div className="art-title" aria-hidden="true">Clarity.<br />Then possibility.</div></figure>
-      <div className="sheet-head"><span className="mono"><b>T-01</b> · AI Readiness Audit</span><span className="mono">Run by The Collective · Collective AI Inc</span></div>
+      <figure className="audit-art"><picture><source media="(max-width: 700px)" srcSet="/img/collective-atrium-800.webp" /><img src="/img/collective-atrium-1600.webp" alt="Architectural concept of a shared research atrium with a living courtyard" width="1600" height="900" fetchPriority="high" /></picture><figcaption>Collective AI, architectural concept</figcaption><div className="art-title" aria-hidden="true">Clarity.<br />Then possibility.</div></figure>
+      <div className="sheet-head"><span className="mono"><b>T-01</b> AI Readiness Audit</span><span className="mono">Run by The Collective, Collective AI Inc</span></div>
 
       <div className="block">
         <div className="margin"><b>§ 01</b>The audit<small>Twenty-five questions. About six minutes. Five scores.</small></div>
         <div className="body">
           <div className="hero-tc">
             <div>
-              <h1>Where does your business <span className="accent">actually</span> stand with AI?</h1>
+              <h1>Where does your business actually stand with AI?</h1>
               <p className="lede" style={{ marginTop: 24 }}>Twenty-five questions about how your business runs today. You get five readiness scores, an estimate of the hours AI could give back each week, and the Collective AI division to call first.</p>
               <div className="actions" style={{ marginTop: 30 }}>
-                <Link className="btn btn-gold btn-lg" href="/audit">Take the free audit →</Link>
-                <span className="mono">No card · no commitment</span>
+                <Link className="btn btn-gold btn-lg" href="/audit">Take the free audit</Link>
+                <span className="mono">No card and no commitment</span>
               </div>
               <div className="memo" style={{ marginTop: 36 }}>
                 <span>The AI Readiness Audit</span>
                 <em>Free</em>
-                <b>25 questions · about 6 minutes · 5 scores</b>
+                <b>25 questions, about 6 minutes, 5 scores</b>
                 <span>Your report appears the moment you finish.</span>
               </div>
             </div>
@@ -101,7 +101,7 @@ export default function Home() {
           <h2>Your weakest score picks the division</h2>
           <ol className="routes">
             {ROUTES.map(([dim, slug, name]) => (
-              <li key={slug}><span className="dimn">{dim} is lowest →</span><a href={divisionUrl(slug)}><Tile mark={slug} size={30} />{name}</a></li>
+              <li key={slug}><span className="dimn">{dim} is lowest</span><a href={divisionUrl(slug)}><Tile mark={slug} size={30} />{name}</a></li>
             ))}
           </ol>
           <p className="muted" style={{ fontSize: '.92rem' }}>Data and technology gaps often route to two divisions at once; the results page shows both.</p>
@@ -124,7 +124,7 @@ export default function Home() {
           <h2>Built from the frameworks we use with clients</h2>
           <p className="lede">The Collective is the AI strategy consulting division of Collective AI Inc. This audit is the first thing we run in a real engagement, opened up so you can run it yourself. Your answers are stored encrypted and used for one follow-up, if you ask for one.</p>
           <div className="actions" style={{ marginTop: 28 }}>
-            <Link className="btn btn-gold btn-lg" href="/audit">Take the free audit →</Link>
+            <Link className="btn btn-gold btn-lg" href="/audit">Take the free audit</Link>
             <a className="btn" href={divisionUrl('the-collective')}>About The Collective ↗</a>
             <a className="btn" href={SITE.main}>Collective AI Inc ↗</a>
           </div>

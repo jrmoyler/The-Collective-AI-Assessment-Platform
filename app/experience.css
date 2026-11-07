@@ -101,3 +101,18 @@ h1,h2,h3 { font-weight:500; }
 @media(max-width:759px) { .block { padding-block:48px; } .audit-art { margin-inline:calc(-1 * var(--gutter)); } .art-title { font-size:3.8rem; } .audit-art figcaption { right:20px; bottom:16px; font-size:8px; } .audit-status { gap:14px; } .stats { grid-template-columns:1fr; } .report-nav { gap:12px 20px; } .routecard { padding:24px; } .admin-login { grid-template-columns:1fr; margin:24px 16px; } .admin-login .login-intro { border-right:0; border-bottom:1px solid var(--rule); } .admin-shell { padding:24px 16px; } .admin-shell > div:first-child { padding:20px!important; } .flow-nav .btn { padding-inline:14px; } .tblock > div { padding:24px; } }
 @media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } *,*::before,*::after { animation:none!important; transition:none!important; } }
 @media print { .nav,.foot,.silk,.veilgrad,.report-nav,.report .actions,.skip-link { display:none!important; } body,.sheet,.report,.stats > div,.verdict,.routecard,.nextstep,.agents li { background:white!important; color:#111!important; } body::before { display:none; } .rv2 { opacity:1!important; transform:none!important; } .report * { color:#111!important; } .sheet { max-width:none; padding:0; } .sec2 { padding:28px 0; break-inside:avoid; } .bars .trk i { transform:scaleX(var(--v)); } }
+
+/* WCAG 2.2 AA layer */
+html { scroll-padding-top: 96px; scroll-padding-bottom: 140px; }
+.skip-link { z-index: 1000; }
+.runby a { display: inline-flex; align-items: center; min-height: 24px; padding-block: 4px; }
+.nav { min-width: 0; }
+.nav .brand { min-width: 0; }
+@media (max-width: 480px) {
+  .nav .brand small { display: none; }
+  .nav-cta .btn-gold { padding-inline: 12px; font-size: .84rem; white-space: nowrap; }
+}
+@media (max-width: 360px) {
+  .nav .brand b { font-size: .86rem; }
+  .nav-cta .btn-gold { padding-inline: 10px; }
+}
