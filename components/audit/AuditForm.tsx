@@ -61,13 +61,13 @@ export default function AuditForm() {
     });
     setErrors(errs);
     const first = Object.keys(errs)[0];
-    if (first) document.getElementById(`q-${first}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (first) document.getElementById(`q-${first}`)?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
     return !first;
   };
 
   const goTo = (n: number) => {
     setCurrent(n); setReached((r) => Math.max(r, n)); setErrors({});
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
     setTimeout(() => headRef.current?.focus({ preventScroll: true }), 350);
   };
 
@@ -76,8 +76,10 @@ export default function AuditForm() {
     // Hour sliders left at 0 are sent as 0, not missing.
     const full: Answers = { ...answers };
     questions.forEach((q) => { if (isHours(q.id) && full[q.id as keyof AuditAnswers] === undefined) (full as Record<string, unknown>)[q.id] = 0; });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 60000);
     try {
-      const res = await fetch('/api/assess', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ answers: full }) });
+      const res = await fetch('/api/assess', { signal: controller.signal, method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ answers: full }) });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.assessment) throw new Error(data.error || 'The analysis did not come back.');
       sessionStorage.setItem('audit_result', JSON.stringify(data.assessment));
@@ -87,7 +89,7 @@ export default function AuditForm() {
     } catch (err) {
       setLoading(false);
       setSubmitError(`${err instanceof Error ? err.message : 'Something went wrong.'} Your answers are saved on this device. Try again in a moment.`);
-    }
+    } finally { clearTimeout(timeout); }
   };
 
   const next = () => {
@@ -126,9 +128,9 @@ export default function AuditForm() {
         </aside>
 
         <main>
-          <div className="mrail" aria-hidden="true">{sections.map((s) => <i key={s.id} className={s.id === current ? 'on' : s.id < current ? 'done' : ''} />)}</div>
+          <nav className="mobile-sections" aria-label="Audit sections">{sections.map((s) => <button key={s.id} type="button" disabled={s.id > reached} aria-current={s.id === current ? 'step' : undefined} aria-label={`Section ${s.id}: ${s.title}`} onClick={() => goTo(s.id)}>{String(s.id).padStart(2, '0')}</button>)}</nav>
           <header className="qhead">
-            <div className="kicker">Section {current} of {total}</div>
+            <div className="audit-status"><span className="kicker">Section {current} of {total}</span><span className="mono">{progress}% complete · saved locally</span></div>
             <h1 ref={headRef} tabIndex={-1} style={{ outline: 'none' }}>{section.title.replace(' & ', ' and ')}</h1>
             <p>{section.description}</p>
           </header>

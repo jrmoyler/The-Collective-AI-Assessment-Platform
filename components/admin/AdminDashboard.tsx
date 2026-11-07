@@ -10,31 +10,28 @@ function getPriorityStyle(priority: string): React.CSSProperties {
   return { background: 'rgba(107,114,128,0.1)', color: '#6b7280', border: '1px solid rgba(107,114,128,0.3)' };
 }
 
-function LoginForm({ onLogin }: { onLogin: (u: string, p: string) => void }) {
+function LoginForm({ onLogin, loading, error }: { onLogin: (u: string, p: string) => void; loading: boolean; error: string }) {
   const [u, setU] = useState('');
   const [p, setP] = useState('');
-
   return (
-    <div style={{ backgroundColor: '#0B0F1C', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#F5F5F5' }}>
-      <div style={{ background: 'rgba(26,32,64,0.6)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: 16, padding: 48, width: 400 }}>
-        <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <Tile mark="the-collective" size={48} />
-          <h1 style={{ fontSize: 24, fontWeight: 800 }}>Admin Dashboard</h1>
-          <p style={{ color: '#8B9BAE', fontSize: 14 }}>The Collective — Collective AI</p>
-        </div>
-        <div style={{ marginBottom: 20 }}>
-          <label style={{ display: 'block', fontSize: 13, color: '#8B9BAE', marginBottom: 8, fontWeight: 600 }}>USERNAME</label>
-          <input value={u} onChange={e => setU(e.target.value)} style={{ width: '100%', padding: '12px 16px', background: 'rgba(11,15,28,0.8)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: 8, color: '#F5F5F5', fontSize: 15, outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box' }} />
-        </div>
-        <div style={{ marginBottom: 32 }}>
-          <label style={{ display: 'block', fontSize: 13, color: '#8B9BAE', marginBottom: 8, fontWeight: 600 }}>PASSWORD</label>
-          <input type="password" value={p} onChange={e => setP(e.target.value)} onKeyDown={e => e.key === 'Enter' && onLogin(u, p)} style={{ width: '100%', padding: '12px 16px', background: 'rgba(11,15,28,0.8)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: 8, color: '#F5F5F5', fontSize: 15, outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box' }} />
-        </div>
-        <button onClick={() => onLogin(u, p)} style={{ width: '100%', background: '#D4A843', color: '#0B0F1C', padding: '14px', borderRadius: 8, fontWeight: 800, fontSize: 16, cursor: 'pointer', border: 'none' }}>
-          Access Dashboard →
-        </button>
+    <main className="admin-login">
+      <div className="login-intro">
+        <Tile mark="the-collective" size={52} />
+        <span className="kicker" style={{ marginTop: 28 }}>The Collective · Operations</span>
+        <h1>From insight<br />to action.</h1>
+        <p>Review readiness reports, identify the next conversation, and keep outreach moving with a clear view of the work.</p>
       </div>
-    </div>
+      <form onSubmit={(e) => { e.preventDefault(); if (!loading) onLogin(u, p); }} aria-busy={loading}>
+        <span className="kicker">Private workspace</span>
+        <h2 style={{ fontSize: 30, marginTop: 14 }}>Access the desk</h2>
+        <label htmlFor="admin-user">Username</label>
+        <input id="admin-user" autoComplete="username" required value={u} onChange={e => setU(e.target.value)} />
+        <label htmlFor="admin-password">Password</label>
+        <input id="admin-password" type="password" autoComplete="current-password" required value={p} onChange={e => setP(e.target.value)} />
+        {error && <p className="banner" role="alert">{error}</p>}
+        <button className="btn btn-gold" type="submit" disabled={loading}>{loading ? 'Connecting…' : 'Access dashboard →'}</button>
+      </form>
+    </main>
   );
 }
 
@@ -50,18 +47,18 @@ export default function AdminDashboard() {
   const [authError, setAuthError] = useState('');
 
   const fetchData = useCallback(async (user: string, pass: string): Promise<boolean> => {
-    setLoading(true);
+    setLoading(true); setAuthError('');
     const token = btoa(unescape(encodeURIComponent(`${user}:${pass}`)));
-    const res = await fetch('/api/submissions', { headers: { Authorization: `Basic ${token}` } });
-    if (!res.ok) {
-      setAuthError('Invalid credentials');
-      setLoading(false);
+    try {
+      const res = await fetch('/api/submissions', { headers: { Authorization: `Basic ${token}` } });
+      if (!res.ok) throw new Error(res.status === 401 ? 'Check your username and password.' : 'The workspace is unavailable. Try again.');
+      const data = await res.json();
+      setSubmissions(data.submissions || []);
+      return true;
+    } catch (error) {
+      setAuthError(error instanceof Error ? error.message : 'Could not connect. Try again.');
       return false;
-    }
-    const data = await res.json();
-    setSubmissions(data.submissions || []);
-    setLoading(false);
-    return true;
+    } finally { setLoading(false); }
   }, []);
 
   const handleLogin = async (user: string, pass: string) => {
@@ -75,12 +72,16 @@ export default function AdminDashboard() {
 
   const markContacted = async (id: string, contacted: boolean) => {
     const token = btoa(unescape(encodeURIComponent(`${creds.user}:${creds.pass}`)));
-    await fetch('/api/update-contacted', {
+    setAuthError('');
+    try {
+    const res = await fetch('/api/update-contacted', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Basic ${token}` },
       body: JSON.stringify({ id, contacted }),
     });
+    if (!res.ok) throw new Error('Contact status was not saved. Try again.');
     setSubmissions(prev => prev.map(s => s.id === id ? { ...s, contacted } : s));
+    } catch { setAuthError('Contact status was not saved. Try again.'); }
   };
 
   const exportCSV = () => {
@@ -126,18 +127,7 @@ Collective AI | Columbus, Ohio`;
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
 
-  if (!authed || authError) {
-    return (
-      <div>
-        {authError && (
-          <div style={{ position: 'fixed', top: 20, left: '50%', transform: 'translateX(-50%)', background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', color: '#ef4444', padding: '12px 24px', borderRadius: 8, zIndex: 100, fontSize: 14 }}>
-            {authError}
-          </div>
-        )}
-        <LoginForm onLogin={handleLogin} />
-      </div>
-    );
-  }
+  if (!authed) return <LoginForm onLogin={handleLogin} loading={loading} error={authError} />;
 
   const highCount = submissions.filter(s => s.priority === 'High').length;
   const medCount = submissions.filter(s => s.priority === 'Medium').length;
@@ -145,13 +135,13 @@ Collective AI | Columbus, Ohio`;
   const contactedCount = submissions.filter(s => s.contacted).length;
 
   return (
-    <div style={{ backgroundColor: '#0B0F1C', minHeight: '100vh', color: '#F5F5F5' }}>
+    <main className="admin-shell" style={{ backgroundColor: '#0B0F1C', minHeight: '100vh', color: '#F5F5F5' }}>
       {/* Header */}
       <div style={{ borderBottom: '1px solid rgba(212,168,67,0.15)', padding: '20px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <Tile mark="the-collective" size={36} />
           <div>
-            <div style={{ fontWeight: 800, fontSize: 16 }}>THE COLLECTIVE</div>
+            <h1 style={{ fontWeight: 500, fontSize: 30 }}>Readiness desk</h1>
             <div style={{ fontSize: 11, color: '#8B9BAE', letterSpacing: '0.1em' }}>ADMIN DASHBOARD</div>
           </div>
         </div>
@@ -166,6 +156,7 @@ Collective AI | Columbus, Ohio`;
       </div>
 
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: '40px' }}>
+        {authError && <div className="banner" role="alert">{authError}</div>}
         {/* Stats */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 20, marginBottom: 40 }}>
           {[
@@ -185,7 +176,7 @@ Collective AI | Columbus, Ohio`;
         {/* Filters */}
         <div style={{ display: 'flex', gap: 16, marginBottom: 28, flexWrap: 'wrap', alignItems: 'center' }}>
           <input
-            placeholder="Search company or email..."
+            aria-label="Search company or email" placeholder="Search company or email..."
             value={search}
             onChange={e => setSearch(e.target.value)}
             style={{ flex: 1, minWidth: 200, padding: '10px 16px', background: 'rgba(26,32,64,0.5)', border: '1px solid rgba(212,168,67,0.15)', borderRadius: 8, color: '#F5F5F5', fontSize: 14, outline: 'none', fontFamily: 'inherit' }}
@@ -197,7 +188,7 @@ Collective AI | Columbus, Ohio`;
               </button>
             ))}
           </div>
-          <select value={sortBy} onChange={e => setSortBy(e.target.value as 'overall_score' | 'created_at' | 'time_savings_hours')} style={{ padding: '10px 16px', background: 'rgba(26,32,64,0.5)', border: '1px solid rgba(212,168,67,0.15)', borderRadius: 8, color: '#F5F5F5', fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}>
+          <select aria-label="Sort submissions" value={sortBy} onChange={e => setSortBy(e.target.value as 'overall_score' | 'created_at' | 'time_savings_hours')} style={{ padding: '10px 16px', background: 'rgba(26,32,64,0.5)', border: '1px solid rgba(212,168,67,0.15)', borderRadius: 8, color: '#F5F5F5', fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}>
             <option value="overall_score">Sort: Score</option>
             <option value="time_savings_hours">Sort: Hours Saved</option>
             <option value="created_at">Sort: Date</option>
@@ -218,7 +209,7 @@ Collective AI | Columbus, Ohio`;
                 {/* Row */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '18px 24px', cursor: 'pointer', flexWrap: 'wrap' }} onClick={() => setExpanded(expanded === s.id ? null : s.id)}>
                   <div style={{ flex: '1 1 200px', minWidth: 0 }}>
-                    <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 2 }}>{s.company_name}</div>
+                    <button type="button" aria-expanded={expanded === s.id} aria-label={`View report for ${s.company_name}`} onClick={e => { e.stopPropagation(); setExpanded(expanded === s.id ? null : s.id); }} style={{ fontWeight: 500, fontSize: 18, marginBottom: 2, background: 'transparent', color: '#F5F5F5', border: 0, padding: 0, textAlign: 'left', cursor: 'pointer' }}>{s.company_name}</button>
                     <div style={{ fontSize: 13, color: '#8B9BAE' }}>{s.email} · {s.industry}</div>
                   </div>
                   <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
@@ -288,7 +279,7 @@ Collective AI | Columbus, Ohio`;
                           }}
                           style={{ background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', padding: '10px 20px', borderRadius: 8, fontWeight: 600, cursor: 'pointer', fontSize: 13, fontFamily: 'inherit' }}
                         >
-                          ✉ Send Outreach Email
+                          Prepare outreach email
                         </button>
                       </div>
                     </div>
@@ -299,6 +290,6 @@ Collective AI | Columbus, Ohio`;
           </div>
         )}
       </div>
-    </div>
+    </main>
   );
 }
