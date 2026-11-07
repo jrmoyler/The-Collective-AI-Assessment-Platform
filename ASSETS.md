@@ -1,5 +1,8 @@
 # Assets
 
-The two `public/img/collective-atrium-*.webp` images reuse the original architectural image generated for the coordinated Collective AI parent redesign on November 7, 2026. It is labeled as a concept, not an existing facility. Prompt: humane future venture-studio atrium at blue hour; dark navy stone, brushed champagne brass, circular skylight, mature tree courtyard and glass research rooms; architectural photography, no text, logos, neon or holograms. No synthetic portraits.
 
 Space Grotesk and JetBrains Mono variable WOFF2 files are the same local fonts supplied by the parent repository. They replace runtime build fetching from Google and are loaded through Next's local font integration.
+
+## Signature scene (November 2026)
+
+The landing hero and the results page carry the readiness crystal, `lib/scene/crystal.ts`: the five-sided readiness shape cut as a stone whose facets extend by score. The landing page uses the illustrative shape and says so; the results page builds the stone from the visitor's five real scores. `lib/scene/kit.ts` is the shared runtime, `components/SceneHost.tsx` the lazy loader. three 0.182.0 from npm. `public/img/readiness-crystal-*.webp` are frames of the scene rendered headlessly: the poster under the canvas and the fallback without WebGL. The generated atrium image is no longer used here.

@@ -41,9 +41,9 @@ export function SiteFooter() {
         <div>
           <span className="lab">Elsewhere</span>
           <ul>
-            <li><a href={SITE.main}>Main site ↗</a></li>
-            <li><a href={SITE.hub}>Start here ↗</a></li>
-            <li><a href={`${SITE.divisions}/`}>Division directory ↗</a></li>
+            <li><a href={SITE.main}>Main site</a></li>
+            <li><a href={SITE.hub}>Start here</a></li>
+            <li><a href={`${SITE.divisions}/`}>Division directory</a></li>
           </ul>
         </div>
         <div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import SceneHost from '@/components/SceneHost';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { AssessmentResult, AuditAnswers } from '@/types';
@@ -113,6 +114,7 @@ export default function ResultsClient() {
         <section className="sec2" id="report-dimensions" style={{ marginTop: 40 }}>
           <div className="kicker">Five dimensions</div>
           <h2>Your readiness, by dimension</h2>
+          <figure className="crystal-band rv2"><SceneHost scene="crystal" still="/img/readiness-crystal" scores={s} /><figcaption>Your readiness crystal: each facet extends to one of your five scores. A live scene, drawn in your browser</figcaption></figure>
           <div className="dims">
             <div className="rv2"><Pentagon s={s} /></div>
             <ul className="bars rv2">

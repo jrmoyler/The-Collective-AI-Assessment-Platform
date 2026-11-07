@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { SITE, divisionUrl } from '@/lib/links';
 import { Tile } from '@/components/Marks';
 import SilkField from '@/components/SilkField';
+import SceneHost from '@/components/SceneHost';
 
 // Five readiness dimensions, as drawn on the results page. Illustrative shape only: no numbers claimed.
 const DIMS = ['Strategy', 'Data', 'Culture', 'Technology', 'Governance'];
@@ -54,7 +55,7 @@ export default function Home() {
     <SilkField />
     <div className="veilgrad" />
     <main className="sheet landing-sheet" style={{ position: 'relative', zIndex: 1 }}>
-      <figure className="audit-art"><picture><source media="(max-width: 700px)" srcSet="/img/collective-atrium-800.webp" /><img src="/img/collective-atrium-1600.webp" alt="Architectural concept of a shared research atrium with a living courtyard" width="1600" height="900" fetchPriority="high" /></picture><figcaption>Collective AI, architectural concept</figcaption><div className="art-title" aria-hidden="true">Clarity.<br />Then possibility.</div></figure>
+      <figure className="audit-art"><SceneHost scene="crystal" still="/img/readiness-crystal" /><figcaption>The readiness crystal. Illustrative shape; your five scores cut your own. A live scene, drawn in your browser</figcaption><div className="art-title" aria-hidden="true">Clarity.<br />Then possibility.</div></figure>
       <div className="sheet-head"><span className="mono"><b>T-01</b> AI Readiness Audit</span><span className="mono">Run by The Collective, Collective AI Inc</span></div>
 
       <div className="block">
@@ -125,8 +126,8 @@ export default function Home() {
           <p className="lede">The Collective is the AI strategy consulting division of Collective AI Inc. This audit is the first thing we run in a real engagement, opened up so you can run it yourself. Your answers are stored encrypted and used for one follow-up, if you ask for one.</p>
           <div className="actions" style={{ marginTop: 28 }}>
             <Link className="btn btn-gold btn-lg" href="/audit">Take the free audit</Link>
-            <a className="btn" href={divisionUrl('the-collective')}>About The Collective ↗</a>
-            <a className="btn" href={SITE.main}>Collective AI Inc ↗</a>
+            <a className="btn" href={divisionUrl('the-collective')}>About The Collective</a>
+            <a className="btn" href={SITE.main}>Collective AI Inc</a>
           </div>
         </div>
       </div>
