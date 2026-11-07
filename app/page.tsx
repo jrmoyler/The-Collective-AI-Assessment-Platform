@@ -53,7 +53,8 @@ export default function Home() {
     <>
     <SilkField />
     <div className="veilgrad" />
-    <main className="sheet" style={{ position: 'relative', zIndex: 1 }}>
+    <main className="sheet landing-sheet" style={{ position: 'relative', zIndex: 1 }}>
+      <figure className="audit-art"><picture><source media="(max-width: 700px)" srcSet="/img/collective-atrium-800.webp" /><img src="/img/collective-atrium-1600.webp" alt="Architectural concept of a shared research atrium with a living courtyard" width="1600" height="900" fetchPriority="high" /></picture><figcaption>Collective AI · architectural concept</figcaption><div className="art-title" aria-hidden="true">Clarity.<br />Then possibility.</div></figure>
       <div className="sheet-head"><span className="mono"><b>T-01</b> · AI Readiness Audit</span><span className="mono">Run by The Collective · Collective AI Inc</span></div>
 
       <div className="block">

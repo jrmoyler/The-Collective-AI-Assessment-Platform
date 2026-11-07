@@ -74,7 +74,7 @@ export default function ResultsClient() {
       <SilkField intensity={0.7} />
       <div className="veilgrad" />
       <main className="sheet" style={{ position: 'relative', zIndex: 1 }}>
-        <section className="rhead">
+        <section className="rhead" id="report-summary">
           <div>
             <div className="kicker">AI readiness report{company ? ` · ${company}` : ''}</div>
             <h1>{first ? `${first}, here is` : 'Here is'} where you <em>stand</em>.</h1>
@@ -95,6 +95,7 @@ export default function ResultsClient() {
           </div>
         </section>
 
+        <nav className="report-nav" aria-label="Report chapters"><a href="#report-summary">01 / Overview</a><a href="#report-dimensions">02 / Dimensions</a><a href="#report-division">03 / Your team</a><a href="#report-next">04 / Next step</a></nav>
         <div className="stats rv2">
           <div><span className="k">Hours back per week</span><b>{result.time_savings_estimate.hours_per_week}<small>hrs</small></b><p>{result.time_savings_estimate.processes.join(' · ')}</p></div>
           <div><span className="k">Projected gain</span><b style={{ fontSize: '1.5rem', lineHeight: 1.2 }}>{result.roi_proxy}</b></div>
@@ -109,7 +110,7 @@ export default function ResultsClient() {
           </div>
         </div>
 
-        <section className="sec2" style={{ marginTop: 40 }}>
+        <section className="sec2" id="report-dimensions" style={{ marginTop: 40 }}>
           <div className="kicker">Five dimensions</div>
           <h2>Your readiness, by dimension</h2>
           <div className="dims">
@@ -129,7 +130,7 @@ export default function ResultsClient() {
           </div>
         </section>
 
-        <section className="sec2">
+        <section className="sec2" id="report-division">
           <div className="kicker">Where to get help first</div>
           <h2>{gapLabel} is your lowest score. Start here.</h2>
           <div className="routecards rv2">
@@ -151,7 +152,7 @@ export default function ResultsClient() {
           </ol>
         </section>
 
-        <section className="sec2" style={{ borderTop: 0, paddingTop: 0 }}>
+        <section className="sec2" id="report-next" style={{ borderTop: 0, paddingTop: 0 }}>
           <div className="nextstep rv2">
             <div className="kicker" style={{ color: 'var(--champagne)' }}>Next step</div>
             <h2>{high ? 'You qualify for a direct strategy call.' : 'Talk it through with The Collective.'}</h2>
