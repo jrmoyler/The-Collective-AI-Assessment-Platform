@@ -143,7 +143,7 @@ export default function ResultsClient() {
               </a>
             ))}
           </div>
-          <p className="muted" style={{ marginTop: 16, fontSize: '.92rem' }}>Every Collective AI division shares one intelligence layer. <a href={`${SITE.divisions}/`} target="_blank" rel="noopener" style={{ color: 'var(--champagne)' }}>See all nine ↗</a></p>
+          <p className="muted" style={{ marginTop: 16, fontSize: '.92rem' }}>Every Collective AI division shares one intelligence layer. <a href={`${SITE.divisions}/`} target="_blank" rel="noopener" style={{ color: 'var(--champagne)' }}>See all eleven ↗</a></p>
         </section>
 
         <section className="sec2">

@@ -4,8 +4,8 @@ import { Tile } from '@/components/Marks';
 
 const DIVS = [
   ['zenflow', 'ZenFlow'], ['the-collective', 'The Collective'], ['hybrid-living', 'Hybrid Living'],
-  ['nexus-labs', 'Nexus Labs'], ['binary-loom', 'Binary Loom'], ['obsidian-arc', 'Obsidian Arc'],
-  ['quantum-ledger', 'Quantum Ledger'], ['juris-guard', 'Juris Guard'], ['signal-velocity', 'Signal Velocity'],
+  ['nexus-labs', 'Nexus Labs'], ['terra-axis', 'Terra Axis'], ['binary-loom', 'Binary Loom'],
+  ['obsidian-arc', 'Obsidian Arc'], ['kinetic-edge', 'Kinetic Edge'], ['quantum-ledger', 'Quantum Ledger'], ['juris-guard', 'Juris Guard'], ['signal-velocity', 'Signal Velocity'],
 ];
 
 /** Sticky header: parent wordmark, the division that runs the tool, and the one call to action. */

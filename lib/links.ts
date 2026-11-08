@@ -1,6 +1,6 @@
 // Where the rest of Collective AI lives. Change these if a site moves to a new address.
 export const SITE = {
-  main: 'https://collectiveai.info',
+  main: 'https://collectiveai-roan.vercel.app',
   hub: 'https://collective-ai-start.vercel.app/',
   divisions: 'https://collective-ai-divisions-brown.vercel.app',
 };
